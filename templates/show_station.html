@@ -101,29 +101,6 @@
 
 
 <div class = 'container'>
- <div class="row featurette">
-          <div class="col-md-7 order-md-2">
-            <h2 class="featurette-heading">{{station.name_fin}} <span class="text-muted">({{station.name_swd}})</span></h2>
-            <p class="lead">{{station.address_fin}}, {{station.city_fin}}</p>
-<p class="lead">({{station.address_swd}}, {{station.city_swd}})</p>
-<p class="lead">Station operator: {{station.operator}}</p>
-<p class="lead">Station capacity: {{station.capacity}}</p>
-<p class="lead">Station coordinates: {{station.coord_x}},</span>
-    <span>{{station.coord_y}}</span></p>
-<p class="lead">Average routes distance to this station: {{info.average_depart}} meters</p>
-<p class="lead">Average routes distance from this station: {{info.average_ret}} meters</p>
-              </p>
-          </div>
-          <div class="col-md-5 order-md-1">
-
-          </div>
-        </div>
-</div>
-
-
-
-
-
 
                     <div class="card ">
                         <div class="row g-o align-items-center">
@@ -137,20 +114,22 @@
                             <div class="col-md-6">
                             <div class="p-3 right-side">
                                 <div class="d-flex justify-content-between align-items-baseline">
-                                    <h5>{{station.name_fin }}</h5>
+                                    <h3>{{station.name_fin }} ({{station.name_swd }})</h3><br>
+
 
                                 </div>
-                            <div class="mt-2 pr-3 content  XR65U" style="font-size: 13px">
-                                <p>{{station.address_fin}}, {{station.city_fin}}</p>
-                                <p>{{station.address_swd}}, {{station.city_swd}}</p>
+                            <div class="mt-2 pr-3 content  XR65U" style="font-size: 16px">
+
+                                <p>{{station.address_fin}}, {{station.city_fin}} ({{station.address_swd}}, {{station.city_swd}})
+                                </p>
                             </div>
                                 <div class="mt-2 pr-3 content " style="font-size: 13px">
 
                                  <ul >
 
-                                           <li class="mt-2 pr-3 content" style="font-size: 13px">Station operator: {{station.operator}}</li>
-                                           <li class="mt-2 pr-3 content" style="font-size: 13px" >Station capacity: {{station.capacity}}</li>
-                                           <li class="mt-2 pr-3 content" style="font-size: 13px"> Station coordinates: {{station.coord_x}}, {{station.coord_y}}</li>
+                                           <li class="mt-2 pr-3 content" style="font-size: 13px">Operator: {{station.operator}}</li>
+                                           <li class="mt-2 pr-3 content" style="font-size: 13px" >Capacity: {{station.capacity}}</li>
+                                           <li class="mt-2 pr-3 content" style="font-size: 13px"> Coordinates: {{station.coord_x}}, {{station.coord_y}}</li>
                                      </ul>
 
                                     <ul >
@@ -158,26 +137,28 @@
 
                                            <li class="mt-2 pr-3 content" style="font-size: 13px">Average routes distance to this station: {{info.average_depart}} meters</li>
                                            <li class="mt-2 pr-3 content" style="font-size: 13px" >Average routes distance from this station: {{info.average_ret}} meters</li>
-                                           <li class="mt-2 pr-3 content" style="font-size: 13px"> Station coordinates: {{station.coord_x}}, {{station.coord_y}}</li>
-                                     </ul>
+                                             </ul>
 <p>Top 5 most popular stations for journeys from the
  {{station.name_fin}}</p>
 <ul >
+ <li class="mt-2 pr-3 content" style="font-size: 13px">
     {% for dep_station in five_depart %}
 
 
-                                           <li class="mt-2 pr-3 content" style="font-size: 13px">{{dep_station.name_fin}}</li>
+                                          <a href="{% url 'show_station' dep_station.station_id %}">{{dep_station.name_fin}}, </a>
                                             {% endfor %}
+</li>
                                      </ul>
 <p>Top 5 most popular stations for journeys to the
  {{station.name_fin}}</p>
 
                                 <ul >
+                                <li class="mt-2 pr-3 content" style="font-size: 13px">
     {% for ret_station in five_ret %}
+<a href="{% url 'show_station' ret_station.station_id %}">{{ret_station.name_fin}}, </a>
 
-
-                                           <li class="mt-2 pr-3 content" style="font-size: 13px">{{ret_station.name_fin}}</li>
                                             {% endfor %}
+                                </li>
                                      </ul>
 
 
@@ -213,7 +194,7 @@
 }
 </script>
 <script
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC6ksGbDCFw65P7xvjyn6ApvfaukLf3WHY&callback=initMap"></script>
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBmqGADJXOGm8sLwp50hu1In521r-RpL-o&callback=initMap"></script>
 
 
 

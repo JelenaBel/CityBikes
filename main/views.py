@@ -1,20 +1,32 @@
 from django.shortcuts import render
 from .launch import Launch
-from .models import Station, Route
+from .models import Station, Route, MistakesRoute
 from django.core.paginator import Paginator
 
 # Create your views here.
 
 
 def index(request):
+    # this is special launch class object which is needed in information from given files is not in database.
+    # Notice that process off populating empty database can take long time.
+    # if database is already populated with info, please put following 7 row under the comment sign, so this code do not
+    # interrupt normal functionality of this app
     launch = Launch()
     if Station.objects.count() < 1:
         launch = Launch()
         launch.launch_stations()
     if Route.objects.count() < 1:
         launch.launch_routes()
+    success = launch.check_launch()
+    if not success:
+        error_message = 'There is no consistency in information in database'
+    # this is the end of part of the code, which is needed for populating empty database
 
-    return render(request, 'index.html')
+    #
+    station_number = Station.objects.all().count()
+    routes_number = Route.objects.all().count()
+
+    return render(request, 'index.html', {'stations': station_number, 'routes_total': routes_number})
 
 
 def stations(request):
