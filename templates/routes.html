@@ -121,7 +121,7 @@
           {% for elem in route_on_page %}
               <tr>
 
-              <td>{{ elem.route_id }}</td>
+                  <td><a href ="{% url 'show_route' elem.route_id %}">{{ elem.route_id }}</a></td>
               <td>{{ elem.departure_time  }}</td>
               <td>{{ elem.return_time }}</td>
               <td>{{ elem.departure_station_id}}</td>

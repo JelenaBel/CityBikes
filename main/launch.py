@@ -11,7 +11,7 @@ class Launch:
         self.stations = []
         self.row_data_lines_count = 0
         self.stop_point = 0
-        self.launched=False
+        self.launched = False
 
     def launch_stations(self):
         row_data = []

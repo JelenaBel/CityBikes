@@ -8,6 +8,7 @@ urlpatterns = [
     path('stations/', views.stations, name='stations'),
     path('routes/', views.routes, name='routes'),
     path('show_station/<station_id>', views.show_station, name='show_station'),
+    path('show_route/<route_id>', views.show_route, name='show_route'),
 
 
 
