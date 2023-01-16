@@ -43,7 +43,7 @@ def stations(request):
 
 
 def show_station(request, station_id):
-    station = Station.objects.get(pk=station_id)
+    station = Station.objects.get(station_id=station_id)
     info = {}
     routes_start = Route.objects.filter(departure_station_id=station_id)
     avg_start = Route.objects.filter(departure_station_id=station_id).aggregate(Avg('covered_distance'))
@@ -69,8 +69,8 @@ def show_station(request, station_id):
     p=0
     for el in rows:
         if p < 5:
-            station = Station.objects.get(pk=el[0])
-            from_station.append(station)
+            station2 = Station.objects.get(pk=el[0])
+            from_station.append(station2)
             p=p+1
         else:
             break
@@ -88,8 +88,8 @@ def show_station(request, station_id):
     for elem in rows:
         if n < 5:
             print(elem)
-            station = Station.objects.get(pk=elem[0])
-            to_station.append(station)
+            station1 = Station.objects.get(pk=elem[0])
+            to_station.append(station1)
             n = n + 1
         else:
             break
