@@ -131,7 +131,7 @@
                                            <li class="mt-2 pr-3 content" style="font-size: 13px" >Capacity: {{station.capacity}}</li>
                                            <li class="mt-2 pr-3 content" style="font-size: 13px"> Coordinates: {{station.coord_x}}, {{station.coord_y}}</li>
                                      </ul>
-
+<h6>Monthly statistic: {{ month }}</h6>
                                     <ul >
 
 
@@ -142,10 +142,10 @@
  {{station.name_fin}}</p>
 <ul >
  <li class="mt-2 pr-3 content" style="font-size: 13px">
-    {% for end_station in from_station %}
+    {% for dep_station in five_depart %}
 
 
-                                          <a href="{% url 'show_station' end_station.station_id %}">{{end_station.name_fin}}, </a>
+                                          <a href="{% url 'show_station' dep_station.station_id %}">{{dep_station.name_fin}}, </a>
                                             {% endfor %}
 </li>
                                      </ul>
@@ -154,19 +154,19 @@
 
                                 <ul >
                                 <li class="mt-2 pr-3 content" style="font-size: 13px">
-    {% for start_station in to_station %}
-<a href="{% url 'show_station' start_station.station_id %}">{{start_station.name_fin}}, </a>
+    {% for ret_station in five_ret %}
+<a href="{% url 'show_station' ret_station.station_id %}">{{ret_station.name_fin}}, </a>
 
                                             {% endfor %}
                                 </li>
                                      </ul>
+                                 <a href = "{% url 'show_station_per_month' station_id=station.station_id month='05' %}">May</a>
+                            <a href = "{% url 'show_station_per_month' station_id=station.station_id month='06' %}">June</a>
+                            <a href = "{% url 'show_station_per_month' station_id=station.station_id month='07' %}">July</a>
 
                                 </div>
 
 </div>
-                                <a href = "{% url 'show_station_per_month' station_id=station.station_id month='05' %}">May</a>
-                            <a href = "{% url 'show_station_per_month' station_id=station.station_id month='06' %}">June</a>
-                            <a href = "{% url 'show_station_per_month' station_id=station.station_id month='07' %}">July</a>
 
                             </script>
 

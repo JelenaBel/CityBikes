@@ -3,6 +3,9 @@ from .launch import Launch
 from .models import Station, Route, MistakesRoute
 from django.core.paginator import Paginator
 from django.db.models import Sum, Q, Avg, Count
+import calendar
+from calendar import HTMLCalendar
+from django.db import connection
 
 # Create your views here.
 
@@ -38,66 +41,96 @@ def stations(request):
     return render(request, 'stations.html', {'stations': stations, 'station_on_page': station_on_page})
 
 
-def show_station(request, station_id):
-    print(station_id)
 
+def show_station(request, station_id):
     station = Station.objects.get(pk=station_id)
     info = {}
     routes_start = Route.objects.filter(departure_station_id=station_id)
     avg_start = Route.objects.filter(departure_station_id=station_id).aggregate(Avg('covered_distance'))
-    print('average start', avg_start)
+
     avg_start = avg_start['covered_distance__avg']
     avg_start = f"{avg_start:.2f}"
 
     routes_ends = Route.objects.filter(return_station_id=station_id)
     avg_end = Route.objects.filter(return_station_id=station_id).aggregate(Avg('covered_distance'))
-    print('average end', avg_end)
+
     avg_end = avg_end['covered_distance__avg']
     avg_end = f"{avg_end:.2f}"
     info['average_depart'] = avg_start
     info['average_ret'] = avg_end
 
-    # counting Top 5 most popular departure stations for journeys ending at the station
-    routes_ends = Route.objects.filter(return_station_id=station_id)
-    depart_stations = []
-    for el_route in routes_ends:
-        depart_stations.append(el_route.departure_station_id)
+    with connection.cursor() as cursor:
+        cursor.execute('SELECT return_station_id FROM (SELECT return_station_id, '
+                       'COUNT(return_station_id) AS RETURN_COUNT FROM main_route '
+                       'WHERE departure_station_id=%s GROUP BY return_station_id) '
+                       'ORDER BY RETURN_COUNT DESC', (station_id, ))
+        rows = cursor.fetchall()
+    from_station = []
+    p=0
+    for el in rows:
+        if p < 5:
+            station = Station.objects.get(pk=el[0])
+            from_station.append(station)
+            p=p+1
+        else:
+            break
 
-    top_five_depart = {}
-    for dep_station in depart_stations:
-        appearance = depart_stations.count(dep_station)
-        if dep_station not in top_five_depart.keys():
-            top_five_depart[dep_station] = appearance
+    with connection.cursor() as cursor:
+        cursor.execute(
+            'SELECT departure_station_id FROM (SELECT departure_station_id, '
+            'COUNT(departure_station_id) AS DEPART_COUNT FROM main_route '
+            'WHERE return_station_id=%s GROUP BY departure_station_id) '
+            'ORDER BY DEPART_COUNT DESC',
+            (station_id,))
+        rows = cursor.fetchall()
+    to_station = []
+    n = 0
+    for elem in rows:
+        if n < 5:
+            print(elem)
+            station = Station.objects.get(pk=elem[0])
+            to_station.append(station)
+            n = n + 1
+        else:
+            break
 
-    top_five_depart = sorted(top_five_depart.items(), key=lambda x: x[1], reverse=True)
+    return render(request, 'show_station.html', {'station': station, 'info': info,  'from_station': from_station,
+                                                 'to_station': to_station})
 
-    five_depart = []
-    for m in range(0, 5):
-        id_st = top_five_depart[m][0]
-        dep_stat = Station.objects.get(pk=id_st)
-        five_depart.append(dep_stat)
 
-    # counting Top 5 most popular return stations for journeys starting from the station
-    return_stations = []
-    for el_route in routes_start:
-        return_stations.append(el_route.return_station_id)
+def show_station_per_month(request, station_id, month):
+    year = 2021
+    month_number=int(month)
+    station = Station.objects.get(pk=station_id)
 
-    top_five_return = {}
-    for ret_station in return_stations:
-        appearance = return_stations.count(ret_station)
-        if ret_station not in top_five_return.keys():
-            top_five_return[ret_station] = appearance
-    top_five_return = sorted(top_five_return.items(), key=lambda x: x[1], reverse=True)
+    info = {}
+    avg_start = Route.objects.filter(
+        departure_station_id=station_id,
+        departure_time__month=month_number,
+        departure_time__year=year
+    ).aggregate(Avg('covered_distance'))
 
-    five_ret = []
+    print('Average start from this station', avg_start)
+    avg_dep = Route.objects.filter(
+        return_station_id=station_id,
+        departure_time__month=month_number,
+        departure_time__year=year
+    ).aggregate(Avg('covered_distance'))
 
-    for key_ret in range(0, 5):
-        id_st = top_five_return[key_ret][0]
-        ret_stat = Station.objects.get(pk=id_st)
-        five_ret.append(ret_stat)
+    print('Average return from this station', avg_dep)
+    avg_start = avg_start['covered_distance__avg']
+    avg_start = f"{avg_start:.2f}"
+    avg_end = avg_dep['covered_distance__avg']
+    avg_end = f"{avg_end:.2f}"
 
-    return render(request, 'show_station.html', {'station': station, 'info': info, 'five_depart': five_depart,
-                                                 'five_ret': five_ret})
+    info['average_depart'] = avg_start
+    info['average_ret'] = avg_end
+    return render(request, 'show_station_per_month.html', {'station': station, 'month': month, 'info': info })
+
+
+
+
+
 
 
 def routes(request):

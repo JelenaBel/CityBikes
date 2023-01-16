@@ -201,6 +201,7 @@ class Launch:
 
     # function for checking correctness of database populating process and consistency of information taken from the
     # given csv-files and placed in database
+
     def check_launch(self):
         row_data = []
         missed = []
