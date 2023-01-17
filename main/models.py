@@ -37,6 +37,8 @@ class Station (models.Model):
         return self.station_id
 
 
+
+
 class MistakesStation(models.Model):
     mistake_station_id = models.CharField('Mistake Station id', max_length=16, primary_key=True, unique=True)
     info_line = models.CharField('Info line', max_length=600)

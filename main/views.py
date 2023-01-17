@@ -3,11 +3,8 @@ from .launch import Launch
 from .models import Station, Route, MistakesRoute
 from django.core.paginator import Paginator
 from django.db.models import Sum, Q, Avg, Count
-import calendar
-from calendar import HTMLCalendar
 from django.db import connection
 
-# Create your views here.
 
 
 def index(request):
@@ -41,19 +38,13 @@ def stations(request):
     return render(request, 'stations.html', {'stations': stations, 'station_on_page': station_on_page})
 
 
-
 def show_station(request, station_id):
     station = Station.objects.get(station_id=station_id)
     info = {}
-    routes_start = Route.objects.filter(departure_station_id=station_id)
     avg_start = Route.objects.filter(departure_station_id=station_id).aggregate(Avg('covered_distance'))
-
     avg_start = avg_start['covered_distance__avg']
     avg_start = f"{avg_start:.2f}"
-
-    routes_ends = Route.objects.filter(return_station_id=station_id)
     avg_end = Route.objects.filter(return_station_id=station_id).aggregate(Avg('covered_distance'))
-
     avg_end = avg_end['covered_distance__avg']
     avg_end = f"{avg_end:.2f}"
     info['average_depart'] = avg_start
@@ -66,12 +57,12 @@ def show_station(request, station_id):
                        'ORDER BY RETURN_COUNT DESC', (station_id, ))
         rows = cursor.fetchall()
     from_station = []
-    p=0
+    p = 0
     for el in rows:
         if p < 5:
             station2 = Station.objects.get(pk=el[0])
             from_station.append(station2)
-            p=p+1
+            p = p + 1
         else:
             break
 
@@ -99,38 +90,79 @@ def show_station(request, station_id):
 
 
 def show_station_per_month(request, station_id, month):
-    year = 2021
-    month_number=int(month)
-    station = Station.objects.get(pk=station_id)
-
+    year = '2021'
+    month_number = int(month)
+    station = Station.objects.get(station_id=station_id)
     info = {}
-    avg_start = Route.objects.filter(
-        departure_station_id=station_id,
-        departure_time__month=month_number,
-        departure_time__year=year
-    ).aggregate(Avg('covered_distance'))
 
-    print('Average start from this station', avg_start)
-    avg_dep = Route.objects.filter(
-        return_station_id=station_id,
-        departure_time__month=month_number,
-        departure_time__year=year
-    ).aggregate(Avg('covered_distance'))
+    with connection.cursor() as cursor:
+        cursor.execute(
+            "SELECT AVG(covered_distance) FROM main_route WHERE (departure_station_id=%s "
+            "AND strftime('%%m', departure_time)=%s "
+            "AND strftime('%%Y', departure_time)=%s)", (station_id, str(month), year))
+        rows = cursor.fetchall()
 
-    print('Average return from this station', avg_dep)
-    avg_start = avg_start['covered_distance__avg']
+    avg_start = rows[0][0]
     avg_start = f"{avg_start:.2f}"
-    avg_end = avg_dep['covered_distance__avg']
+    print('Checkeng database query time - starts on this station',  avg_start)
+
+    with connection.cursor() as cursor:
+        cursor.execute(
+            "SELECT AVG(covered_distance) FROM main_route WHERE (return_station_id=%s "
+            "AND strftime('%%m', departure_time)=%s "
+            "AND strftime('%%Y', departure_time)=%s)", (station_id, str(month), year))
+        rows2 = cursor.fetchall()
+
+    avg_end = rows2[0][0]
+
     avg_end = f"{avg_end:.2f}"
 
     info['average_depart'] = avg_start
     info['average_ret'] = avg_end
-    return render(request, 'show_station_per_month.html', {'station': station, 'month': month, 'info': info })
 
 
+    # HERE!!!!!
 
+    with connection.cursor() as cursor:
+        cursor.execute(
+            'SELECT return_station_id FROM (SELECT return_station_id, '
+            'COUNT(return_station_id) AS RETURN_COUNT FROM main_route '
+            'WHERE (departure_station_id=%s AND strftime("%%m", departure_time)=%s '
+            'AND strftime("%%Y", departure_time)=%s) GROUP BY return_station_id) '
+            'ORDER BY RETURN_COUNT DESC', (station_id, str(month), year))
+        rows_from = cursor.fetchall()
+    from_station = []
+    p = 0
+    for el in rows_from:
+        if p < 5:
+            station2 = Station.objects.get(pk=el[0])
+            from_station.append(station2)
+            p = p + 1
+        else:
+            break
 
+    with connection.cursor() as cursor:
+        cursor.execute(
+            'SELECT departure_station_id FROM (SELECT departure_station_id, '
+            'COUNT(departure_station_id) AS DEPART_COUNT FROM main_route '
+            'WHERE return_station_id=%s AND strftime("%%m", departure_time)=%s AND strftime("%%Y", departure_time)=%s '
+            'GROUP BY departure_station_id) '
+            'ORDER BY DEPART_COUNT DESC',
+            (station_id, str(month), year))
+        rows_start = cursor.fetchall()
+    to_station = []
+    n = 0
+    for elem in rows_start:
+        if n < 5:
+            print(elem)
+            station1 = Station.objects.get(pk=elem[0])
+            to_station.append(station1)
+            n = n + 1
+        else:
+            break
 
+    return render(request, 'show_station_per_month.html', {'station': station, 'month': month, 'info': info,
+                                                           'from_station': from_station, 'to_station': to_station })
 
 
 def routes(request):

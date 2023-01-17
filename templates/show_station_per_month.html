@@ -142,10 +142,10 @@
  {{station.name_fin}}</p>
 <ul >
  <li class="mt-2 pr-3 content" style="font-size: 13px">
-    {% for dep_station in five_depart %}
+    {% for end_station in from_station %}
 
 
-                                          <a href="{% url 'show_station' dep_station.station_id %}">{{dep_station.name_fin}}, </a>
+                                          <a href="{% url 'show_station' end_station.station_id %}">{{end_station.name_fin}}, </a>
                                             {% endfor %}
 </li>
                                      </ul>
@@ -154,10 +154,12 @@
 
                                 <ul >
                                 <li class="mt-2 pr-3 content" style="font-size: 13px">
-    {% for ret_station in five_ret %}
-<a href="{% url 'show_station' ret_station.station_id %}">{{ret_station.name_fin}}, </a>
+   {% for start_station in to_station %}
+<a href="{% url 'show_station' start_station.station_id %}">{{start_station.name_fin}}, </a>
 
                                             {% endfor %}
+
+
                                 </li>
                                      </ul>
                                  <a href = "{% url 'show_station_per_month' station_id=station.station_id month='05' %}">May</a>
