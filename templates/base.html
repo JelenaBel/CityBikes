@@ -23,6 +23,9 @@
 .contentall {
   padding-top: 70px;
 }
+.navbar{
+        justify-content: flex-start;
+        }
 .sticky_left {
     position: fixed;
     overflow: hidden;
@@ -85,7 +88,7 @@
       }
       .nav-link {
           color: black;
-          font-size: small;
+          font-size: medium;
           font-weight: bold;
 
 
@@ -105,7 +108,7 @@
      <a class="navbar-brand" href="{% url 'index' %}">
         {% load static %} <img src="{% static "bicycle-bike-logo-vector-22962595.jpg" %}" alt="home" height="90px" />
     </a>
-      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="{% url 'index' %}">   CityBikes</a>
+      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="{% url 'index' %}">CityBikes</a>
 
       <ul class="navbar-nav px-3">
         <li class="nav-item text-nowrap">
