@@ -126,17 +126,25 @@
                                 <div class="mt-2 pr-3 content " style="font-size: 13px">
 
                                  <ul >
-
+                                           {% if station.operator != '' %}
                                            <li class="mt-2 pr-3 content" style="font-size: 13px">Operator: {{station.operator}}</li>
+                                           {% else %}
+                                           <li class="mt-2 pr-3 content" style="font-size: 13px">Operator: no operator</li>
+                                     {% endif %}
+
                                            <li class="mt-2 pr-3 content" style="font-size: 13px" >Capacity: {{station.capacity}}</li>
                                            <li class="mt-2 pr-3 content" style="font-size: 13px"> Coordinates: {{station.coord_x}}, {{station.coord_y}}</li>
                                      </ul>
+                                <h6> Station statistic for 3 months</h6>
+                                  <a href = "{% url 'show_station_per_month' station_id=station.station_id month='05' %}">May</a>
+                            <a href = "{% url 'show_station_per_month' station_id=station.station_id month='06' %}">June</a>
+                            <a href = "{% url 'show_station_per_month' station_id=station.station_id month='07' %}">July</a>
 
                                     <ul >
 
 
-                                           <li class="mt-2 pr-3 content" style="font-size: 13px">Average routes distance to this station: {{info.average_depart}} meters</li>
-                                           <li class="mt-2 pr-3 content" style="font-size: 13px" >Average routes distance from this station: {{info.average_ret}} meters</li>
+                                           <li class="mt-2 pr-3 content" style="font-size: 13px">Average routes distance to this station: {{info.average_depart}} km</li>
+                                           <li class="mt-2 pr-3 content" style="font-size: 13px" >Average routes distance from this station: {{info.average_ret}} km</li>
                                              </ul>
 <p>Top 5 most popular stations for journeys from the
  {{station.name_fin}}</p>
@@ -164,9 +172,7 @@
                                 </div>
 
 </div>
-                                <a href = "{% url 'show_station_per_month' station_id=station.station_id month='05' %}">May</a>
-                            <a href = "{% url 'show_station_per_month' station_id=station.station_id month='06' %}">June</a>
-                            <a href = "{% url 'show_station_per_month' station_id=station.station_id month='07' %}">July</a>
+
 
                             </script>
 

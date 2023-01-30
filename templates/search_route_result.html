@@ -1,0 +1,215 @@
+{% extends 'base.html'%}
+
+{% load static %}
+
+{% block title %}City Bikes{% endblock %}
+
+
+{% block content %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Main</title>
+    <style>
+
+
+.contentall {
+  padding-top: 70px;
+}
+
+
+
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+
+      .b-example-divider {
+        height: 3rem;
+        background-color: rgba(0, 0, 0, .1);
+        border: solid rgba(0, 0, 0, .15);
+        border-width: 1px 0;
+        box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
+      }
+      a {
+          color: black;
+      }
+
+      .b-example-vr {
+        flex-shrink: 0;
+        width: 1.5rem;
+        height: 100vh;
+      }
+
+      .bi {
+        vertical-align: -.125em;
+        fill: currentColor;
+      }
+
+      .nav-scroller {
+        position: relative;
+        z-index: 2;
+        height: 2.75rem;
+        overflow-y: hidden;
+      }
+
+      .nav-scroller .nav {
+        display: flex;
+        flex-wrap: nowrap;
+        padding-bottom: 1rem;
+        margin-top: -1px;
+        overflow-x: auto;
+        text-align: center;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .table {
+          font-size: 12px;
+          font-weight: bold;
+      }
+
+
+.page-link{
+    color: black;
+    align-items: center;
+    font-size: 14px;
+
+}
+.demo {
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    justify-content: center
+
+}
+
+    </style>
+
+
+
+
+
+</head>
+<body>
+<div class = 'container'></div>
+
+
+
+<h4>Routes (found {{ results_routes }})</h4>
+
+ <div class="table-responsive">
+        <table class="table  table-responsive-md">
+          <thead>
+            <tr>
+
+
+              <th scope="col">Route ID</th>
+              <th scope="col">Departure time</th>
+                <th scope="col">Return_time</th>
+                <th scope="col">Departure station ID</th>
+              <th scope="col">Departure station name</th>
+              <th scope="col">Return station ID</th>
+                 <th scope="col">Return station name</th>
+                 <th scope="col">Covered distance (m)</th>
+                 <th scope="col">Duration (sec) </th>
+
+
+
+              </tr>
+          </thead>
+          <tbody>
+          {% for elem in routes_on_page %}
+              <tr>
+
+                  <td><a href ="{% url 'show_route' elem.route_id %}">{{ elem.route_id }}</a></td>
+              <td>{{ elem.departure_time  }}</td>
+              <td>{{ elem.return_time }}</td>
+                  <td><a href="{% url 'show_station' elem.departure_station_id %}"> {{ elem.departure_station_id}}</a></td>
+                  <td><a href="{% url 'show_station' elem.departure_station_id %}"> {{ elem.departure_station_name}}</a></td>
+                  <td><a href="{% url 'show_station' elem.return_station_id %}"> {{ elem.return_station_id}}</a></td>
+                  <td><a href="{% url 'show_station' elem.return_station_id %}"> {{ elem.return_station_name}}</a></td>
+                  <td>{{ elem.covered_distance}} </td>
+              <td>{{ elem.duration}} </td>
+
+
+                              </tr>
+          {% endfor %}
+
+          </tbody>
+        </table>
+
+<div class = "demo1">
+         <div class = "demo">
+  <ul class="pagination pagination-sm">
+
+    <li class="page-item">
+
+      <a class="page-link" href="?page={{ routes_on_page.page1}}" aria-label="Next">
+
+
+        <span aria-hidden="true"> First </span>
+
+      </a>
+
+
+    </li>
+  <li class="page-item">
+
+        {% if routes_on_page.has_previous %}
+      <a class="page-link" href="?page={{ routes_on_page.previous_page_number}}" aria-label="Previous">
+
+        <span aria-hidden="true">&laquo;</span>
+      </a>
+
+    <li class="page-item"><a class="page-link" href="?page={{ routes_on_page.previous_page_number}}">{{ routes_on_page.previous_page_number}}</a></li>
+  {% endif %}
+    <li class="page-item"><a class="page-link" href="?page={{ routes_on_page.number}}">{{ routes_on_page.number}}</a></li>
+    {% if routes_on_page.has_next %}
+      <li class="page-item"><a class="page-link" href="?page={{ routes_on_page.next_page_number}}">{{ routes_on_page.next_page_number}}</a></li>
+    <li class="page-item">
+
+
+      <a class="page-link" href="?page={{ routes_on_page.next_page_number}}" aria-label="Next">
+
+
+        <span aria-hidden="true">&raquo;</span>
+
+      </a>
+        <li class="page-item">
+
+
+      <a class="page-link" href="?page={{ routes_on_page.paginator.num_pages}}" aria-label="Next">
+
+
+        <span aria-hidden="true"> Last </span>
+
+      </a>
+        {% endif %}
+
+    </li>
+  </ul>
+         </div>
+
+
+</div>
+
+<h4>footer</h4>
+ </div>
+</body>
+
+
+{% endblock %}

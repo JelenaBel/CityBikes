@@ -1,5 +1,3 @@
-
-
 <HTML lang="en">
   <head>
     <meta charset="utf-8">
@@ -120,26 +118,60 @@
           <a class="nav-link"  style = 'color: white; '  href="{% url 'routes' %}">Routes</a>
         </li>
       </ul>
+    <ul class="navbar-nav px-3">
+        <li class="nav-item text-nowrap">
+          <a class="nav-link"  style = 'color: white; '  href="{% url 'add_station' %}">Add Station</a>
+        </li>
+      </ul>
+     <ul class="navbar-nav px-3">
+        <li class="nav-item text-nowrap">
+          <a class="nav-link"  style = 'color: white; '  href="#">Add Route</a>
+        </li>
+      </ul>
                 <ul class="navbar-nav px-3">
 
           <li class="nav-item text-nowrap" >
           <a class="nav-link" style = 'color: white' href="#">Sign out</a>
         </li>
       </ul>
+    <div class="d-inline-block" style=" justify-content: flex-end">
+        <div class="search-form">
+            <form class="d-flex" role="search" method = POST action = '{% url 'search_station' %}'>
+    {% csrf_token %}
+  <input class="form-control me-2" type="search" placeholder="Search station" aria-label="Search" name ='searched'>
+  <button class="btn btn-outline-secondary" type="submit">Search</button>
+</form>
+        </div>
+    </div>
+
+        </div>
+    </div>
     </nav>
 
-<div class = 'container'>
+
+         {% if messages %}
+              {% for message in messages %}
+                  <div class="container-lg position: align-items-center">
+                  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+  <strong>{{ message }}</strong>
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+                  </div>
+                  </div>
+                  </div>
+
+              {% endfor %}
+          {% endif %}
+
+
+
 
 <div class="contentall">
 
   {% block content %}{% endblock %}
-</div>
+
 
 
 </div>
 
 </HTML>
-
-
-
-

@@ -6,11 +6,18 @@ urlpatterns = [
     # url and function for main page
     path('', views.index, name='index'),
     path('stations/', views.stations, name='stations'),
+    path('stations_sorted/<column>/<order>', views.stations_sorted, name="stations_sorted"),
     path('routes/', views.routes, name='routes'),
+    path('routes_sorted/<column>/<order>', views.routes_sorted, name="routes_sorted"),
+    path('routes_filter/<dep_id>/<ret_id>/<dep>/<ret>/<distance>/<duration>/<start>/<end>/', views.routes_filter,
+         name="routes_filter"),
     path('show_station/<station_id>', views.show_station, name='show_station'),
     path('show_station/<station_id>/<month>/', views.show_station_per_month, name='show_station_per_month'),
     path('show_route/<route_id>', views.show_route, name='show_route'),
-
-
+    path('search_station/', views.search_station, name='search_station'),
+    path('search_station_result/<searched>', views.search_station_result, name='search_station_result'),
+    path('search_route/', views.search_route, name='search_route'),
+    path('search_route_result/<searched>', views.search_route_result, name='search_route_result'),
+    path('add_station/', views.add_station, name="add_station")
 
     ]

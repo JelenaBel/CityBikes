@@ -15,14 +15,12 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Main</title>
     <style>
+
+
 .contentall {
   padding-top: 70px;
 }
-.sticky_left {
-    position: fixed;
-    overflow: hidden;
-    top: 120px;
-}
+
 
 
       .bd-placeholder-img {
@@ -78,17 +76,26 @@
         white-space: nowrap;
         -webkit-overflow-scrolling: touch;
       }
-      .nav-link {
-          color: black;
-          font-size: medium;
-          font-weight: bold;
 
-
-      }
       .table {
           font-size: 12px;
           font-weight: bold;
       }
+
+
+.page-link{
+    color: black;
+    align-items: center;
+    font-size: 14px;
+
+}
+.demo {
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    justify-content: center
+
+}
 
     </style>
 
@@ -98,27 +105,9 @@
 
 </head>
 <body>
-<div class = 'container'>
-<h1>City Bikes</h1>
-{% if error_message %}
-    <p>  {{ error_message }}</p>
-{% endif %}
-<p> Number of stations now - {{ stations }} stations</p>
-<p> Number of routes - {{ routes_total }} routes</p>
-<p> The longest route duration - {{ duration_max }} minutes</p>
-<p> The longest route covered distance - {{ distance_max }} km</p>
-<p> The shortest route duration - {{ duration_min }} minutes</p>
-<p> The shortest route covered distance - {{ distance_min }} km</p>
-<p> The most popular dep station - {{most_popular.name_fin }} </p>
-<p> The least popular dep station - {{least_popular.name_fin }} </p>
-
-
-
-
-</div>
- </div>
-</div>
-
+<div class = 'container'></div>
+<h4> There is no result for your search</h4>
 </body>
-</html>
+
+
 {% endblock %}

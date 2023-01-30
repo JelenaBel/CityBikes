@@ -134,7 +134,11 @@
                                            <li class="mt-2 pr-3 content" style="font-size: 13px" >Capacity: {{station.capacity}}</li>
                                            <li class="mt-2 pr-3 content" style="font-size: 13px"> Coordinates: {{station.coord_x}}, {{station.coord_y}}</li>
                                      </ul>
-<h6>Monthly statistic: {{ month }}</h6>
+<h6>Statistic for {{ month_name }}</h6>
+                                <a href = "{% url 'show_station' station.station_id  %}">Total</a>
+                                 <a href = "{% url 'show_station_per_month' station_id=station.station_id month='05' %}">May</a>
+                            <a href = "{% url 'show_station_per_month' station_id=station.station_id month='06' %}">June</a>
+                            <a href = "{% url 'show_station_per_month' station_id=station.station_id month='07' %}">July</a>
                                     <ul >
 
 
@@ -165,9 +169,6 @@
 
                                 </li>
                                      </ul>
-                                 <a href = "{% url 'show_station_per_month' station_id=station.station_id month='05' %}">May</a>
-                            <a href = "{% url 'show_station_per_month' station_id=station.station_id month='06' %}">June</a>
-                            <a href = "{% url 'show_station_per_month' station_id=station.station_id month='07' %}">July</a>
 
                                 </div>
 

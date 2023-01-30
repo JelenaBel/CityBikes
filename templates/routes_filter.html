@@ -247,16 +247,9 @@ input.form-control{
 </div> <!-- card.// -->
 
 
-
-
-
     </nav>
   <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
-  <h4>Routes</h4>
-  {% if result %}
-   <h4>Result {{result}}</h4>
-   {% endif %}
-
+  <h4>Routes  {{result}}</h4>
 
  <form class="d-flex" style="max-width: 600px" role="search" method = POST action = '{% url 'search_route' %}'>
           {% csrf_token %}

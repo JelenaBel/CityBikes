@@ -53,19 +53,19 @@ class Launch:
                         data[numb] = data[numb].replace('&comma;', ',')
             try:
                 station = Station()
-                station.f_id = data[0]
-                station.station_id = data[1]
-                station.name_fin = data[2]
-                station.name_swd = data[3]
-                station.name_eng = data[4]
-                station.address_fin = data[5]
-                station.address_swd = data[6]
-                station.city_fin = data[7]
-                station.city_swd = data[8]
-                station.operator = data[9]
-                station.capacity = data[10]
-                station.coord_x = data[11]
-                station.coord_y = data[12]
+                station.f_id = int(data[0].strip())
+                station.station_id = int(data[1].strip())
+                station.name_fin = data[2].strip()
+                station.name_swd = data[3].strip()
+                station.name_eng = data[4].strip()
+                station.address_fin = data[5].strip()
+                station.address_swd = data[6].strip()
+                station.city_fin = data[7].strip()
+                station.city_swd = data[8].strip()
+                station.operator = data[9].strip()
+                station.capacity = int(data[10].strip())
+                station.coord_x = data[11].strip()
+                station.coord_y = data[12].strip()
 
                 self.stations.append(station)
                 station.save()
@@ -153,34 +153,38 @@ class Launch:
                 if float(data[6]) >= 10.00 and float(data[7]) >= 10.00:
                     route = Route()
                     route.route_id = j
-                    departure_time = data[0].split('T')
+                    departure_time = (data[0].strip()).split('T')
                     date_dep = departure_time[0].split('-')
-                    year = int(date_dep[0])
-                    month = int(date_dep[1])
-                    day = int(date_dep[1])
+                    year = int(date_dep[0].strip())
+                    month = int(date_dep[1].strip())
+                    day = int(date_dep[1].strip())
                     time_dep = departure_time[1].split(':')
-                    hour = int(time_dep[0])
-                    minute = int(time_dep[1])
-                    second = int(time_dep[2])
+                    hour = int(time_dep[0].strip())
+                    minute = int(time_dep[1].strip())
+                    second = int(time_dep[2].strip())
                     dept_time = datetime.datetime(year, month, day, hour, minute, second).replace(tzinfo=utc)
                     route.departure_time = dept_time
-                    return_time = data[1].split('T')
+                    return_time = (data[1].strip()).split('T')
                     date_ret = return_time[0].split('-')
-                    year1 = int(date_ret[0])
-                    month1 = int(date_ret[1])
-                    day1 = int(date_ret[1])
+                    year1 = int(date_ret[0].strip())
+                    month1 = int(date_ret[1].strip())
+                    day1 = int(date_ret[2].strip())
                     time_dep1 = return_time[1].split(':')
-                    hour1 = int(time_dep1[0])
-                    minute1 = int(time_dep1[1])
-                    second1 = int(time_dep1[2])
+                    hour1 = int(time_dep1[0].strip())
+                    minute1 = int(time_dep1[1].strip())
+                    second1 = int(time_dep1[2].strip())
                     ret_time = datetime.datetime(year1, month1, day1, hour1, minute1, second1).replace(tzinfo=utc)
                     route.return_time = ret_time
-                    route.departure_station_id = data[2]
+                    route.departure_station_id = Station.objects.get(station_id=(data[2].strip()))
                     route.departure_station_name = data[3]
-                    route.return_station_id = data[4]
-                    route.return_station_name = data[5]
-                    route.covered_distance = data[6]
-                    route.duration = data[7]
+                    route.return_station_id = Station.objects.get(station_id=(data[4].strip()))
+                    route.return_station_name = data[5].strip()
+
+                    if ',' in data[6]:
+                        print (data[6])
+                        data[6] = data[6].replace(',', '.')
+                    route.covered_distance = float(data[6].strip())
+                    route.duration = int(data[7].strip())
                     route.save()
 
             except:
@@ -262,17 +266,17 @@ class Launch:
                         data[numb] = data[numb].replace('&comma;', ',')
 
             try:
-                if float(data[6]) < 10.00 or float(data[7]) < 10.00:
+                if float(data[6].strip()) < 10.00 or float(data[7].strip()) < 10.00:
                     missed.append(row_data[j])
 
-                elif float(data[6]) >= 10.00 and float(data[7]) >= 10.00:
+                elif float(data[6].strip()) >= 10.00 and float(data[7].strip()) >= 10.00:
                     route = Route()
                     route.route_id = j
                     departure_time = data[0].split('T')
                     date_dep = departure_time[0].split('-')
                     year = int(date_dep[0])
                     month = int(date_dep[1])
-                    day = int(date_dep[1])
+                    day = int(date_dep[2])
                     time_dep = departure_time[1].split(':')
                     hour = int(time_dep[0])
                     minute = int(time_dep[1])
@@ -283,19 +287,19 @@ class Launch:
                     date_ret = return_time[0].split('-')
                     year1 = int(date_ret[0])
                     month1 = int(date_ret[1])
-                    day1 = int(date_ret[1])
+                    day1 = int(date_ret[2])
                     time_dep1 = return_time[1].split(':')
                     hour1 = int(time_dep1[0])
                     minute1 = int(time_dep1[1])
                     second1 = int(time_dep1[2])
                     ret_time = datetime.datetime(year1, month1, day1, hour1, minute1, second1).replace(tzinfo=utc)
                     route.return_time = ret_time
-                    route.departure_station_id = data[2]
+                    route.departure_station_id = Station.objects.get(station_id=data[2])
                     route.departure_station_name = data[3]
-                    route.return_station_id = data[4]
+                    route.return_station_id = Station.objects.get(station_id=data[4])
                     route.return_station_name = data[5]
-                    route.covered_distance = data[6]
-                    route.duration = data[7]
+                    route.covered_distance = int(data[6].strip())
+                    route.duration = int(data[7].strip())
             except:
                 counter_viallinen = counter_viallinen+1
 
@@ -309,6 +313,24 @@ class Launch:
             self.launched = True
 
         return self.launched
+
+    def change_measurements(self):
+        routes = Route.objects.all()
+        counter = 849360
+        for el in routes:
+
+            el.covered_distance_km = el.covered_distance/1000
+            el.covered_distance_km = f"{el.covered_distance_km:.3f}"
+            el.duration_min = el.duration/60
+            el.duration_min = f"{el.duration_min:.2f}"
+
+            el.save()
+            counter = counter+1
+
+            if counter % 1000 == 0:
+                print(counter)
+        return print('Changes made')
+
 
 
 
