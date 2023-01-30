@@ -132,6 +132,10 @@ def show_station(request, station_id):
     avg_end = f"{avg_end:.2f}"
     info['average_depart'] = avg_start
     info['average_ret'] = avg_end
+    trip_from = Route.objects.filter(departure_station_id_id=station_id).count()
+    trip_to = Route.objects.filter(return_station_id_id=station_id).count()
+    info['trip_from'] = trip_from
+    info['trip_to'] = trip_to
 
     with connection.cursor() as cursor:
         cursor.execute('SELECT return_station_id_id FROM (SELECT return_station_id_id, '
@@ -242,9 +246,34 @@ def show_station_per_month(request, station_id, month):
         else:
             break
 
+    with connection.cursor() as cursor:
+        cursor.execute(
+            'SELECT COUNT(route_id)  FROM main_route '
+            'WHERE departure_station_id_id=%s AND strftime("%%m", departure_time)=%s '
+            'AND strftime("%%Y", departure_time)=%s '
+            ,
+            (station_id, str(month), year))
+        trip_from = cursor.fetchall()
+    trip_from = trip_from[0][0]
+
+    info['trip_from'] = trip_from
+    with connection.cursor() as cursor:
+        cursor.execute(
+            'SELECT COUNT(route_id)  FROM main_route '
+            'WHERE return_station_id_id=%s AND strftime("%%m", departure_time)=%s '
+            'AND strftime("%%Y", departure_time)=%s '
+            ,
+            (station_id, str(month), year))
+        trip_to = cursor.fetchall()
+    trip_to = trip_to[0][0]
+
+    info['trip_from'] = trip_from
+    info['trip_to'] = trip_to
+
     return render(request, 'show_station_per_month.html', {'station': station, 'month': month, 'month_name': month_name,
                                                            'info': info, 'from_station': from_station,
                                                            'to_station': to_station})
+
 
 
 def routes(request):
@@ -253,6 +282,7 @@ def routes(request):
 
     if request.method == 'POST':
         form = FiltersForm(request.POST)
+
         departure_station_id = -1
         return_station_id = -1
         departure_station=-1
@@ -277,13 +307,9 @@ def routes(request):
             if 'distance' in request.POST and form.data['distance'] not in '':
                 distance = form.data['distance']
 
-
-
-
             if 'duration' in request.POST and form.data['duration'] not in '':
 
                 duration = form.data['duration']
-
 
             if 'date_start' in request.POST and form.data['date_start'] not in '':
                 print(form.data['date_start'])
@@ -421,6 +447,8 @@ def routes_filter(request, dep_id, ret_id, dep, ret, distance, duration, start, 
     result = len(routes)
     if request.method == 'POST':
         form = FiltersForm(request.POST)
+        form = FiltersForm(request.POST)
+
         departure_station_id = -1
         return_station_id = -1
         departure_station = -1
@@ -446,7 +474,6 @@ def routes_filter(request, dep_id, ret_id, dep, ret, distance, duration, start, 
                 distance = form.data['distance']
 
             if 'duration' in request.POST and form.data['duration'] not in '':
-
                 duration = form.data['duration']
 
             if 'date_start' in request.POST and form.data['date_start'] not in '':
@@ -457,7 +484,8 @@ def routes_filter(request, dep_id, ret_id, dep, ret, distance, duration, start, 
                 data_time = row[1].split(':')
                 if data_date[0][0] == "0":
                     data_date[0] = data_date[0][1]
-                date = datetime.datetime(int(data_date[2].strip()), int(data_date[1].strip()), int(data_date[0].strip()),
+                date = datetime.datetime(int(data_date[2].strip()), int(data_date[1].strip()),
+                                         int(data_date[0].strip()),
                                          int(data_time[0].strip()), int(data_time[1].strip()), 00)
 
                 start = date
@@ -470,14 +498,16 @@ def routes_filter(request, dep_id, ret_id, dep, ret, distance, duration, start, 
                 data_time1 = row_end[1].split(':')
                 if data_date1[0][0] == "0":
                     data_date1[0] = data_date1[0][1]
-                date = datetime.datetime(int(data_date1[2].strip()), int(data_date[1].strip()), int(data_date1[0].strip()),
+                date = datetime.datetime(int(data_date1[2].strip()), int(data_date[1].strip()),
+                                         int(data_date1[0].strip()),
                                          int(data_time1[0].strip()), int(data_time1[1].strip()), 00)
                 end = date
                 print('form return end', end)
 
-        print('Hi', departure_station_id, return_station_id, departure_station, return_station, distance, duration, start, end)
+            print('Hi', departure_station_id, return_station_id, departure_station, return_station, distance, duration,
+              start, end)
 
-        return redirect('routes_filter', departure_station_id, return_station_id, departure_station,
+            return redirect('routes_filter', departure_station_id, return_station_id, departure_station,
                         return_station, distance, duration, start, end)
 
     else:

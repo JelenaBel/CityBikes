@@ -141,7 +141,8 @@
                             <a href = "{% url 'show_station_per_month' station_id=station.station_id month='07' %}">July</a>
                                     <ul >
 
-
+                                          <li class="mt-2 pr-3 content" style="font-size: 13px" >Total routes from this station: {{info.trip_from}} routes</li>
+                                           <li class="mt-2 pr-3 content" style="font-size: 13px">Total routes to this station: {{info.trip_to}} routes</li>
                                            <li class="mt-2 pr-3 content" style="font-size: 13px">Average routes distance to this station: {{info.average_depart}} meters</li>
                                            <li class="mt-2 pr-3 content" style="font-size: 13px" >Average routes distance from this station: {{info.average_ret}} meters</li>
                                              </ul>
