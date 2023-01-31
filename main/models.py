@@ -17,7 +17,6 @@ class Station (models.Model):
     coord_x = models.CharField('X', max_length=30)
     coord_y = models.CharField('Y', max_length=30)
 
-
     def __str__(self):
         return self.station_id
 
@@ -35,7 +34,6 @@ class Route(models.Model):
     duration = models.IntegerField('Duration (sec)')
     covered_distance_km = models.FloatField('Covered distance (km)', default='1')
     duration_min = models.FloatField('Duration (min)',  default='1')
-
 
     def __str__(self):
         return self.route_id

@@ -105,7 +105,7 @@
 
 </head>
 <body>
-<div class = 'container'></div>
+<div class = 'container'>
 
 
 
@@ -138,10 +138,10 @@
                   <td><a href ="{% url 'show_route' elem.route_id %}">{{ elem.route_id }}</a></td>
               <td>{{ elem.departure_time  }}</td>
               <td>{{ elem.return_time }}</td>
-                  <td><a href="{% url 'show_station' elem.departure_station_id %}"> {{ elem.departure_station_id}}</a></td>
-                  <td><a href="{% url 'show_station' elem.departure_station_id %}"> {{ elem.departure_station_name}}</a></td>
-                  <td><a href="{% url 'show_station' elem.return_station_id %}"> {{ elem.return_station_id}}</a></td>
-                  <td><a href="{% url 'show_station' elem.return_station_id %}"> {{ elem.return_station_name}}</a></td>
+                  <td><a href="{% url 'show_station' elem.departure_station_id_id %}"> {{ elem.departure_station_id_id}}</a></td>
+                  <td><a href="{% url 'show_station' elem.departure_station_id_id %}"> {{ elem.departure_station_name}}</a></td>
+                  <td><a href="{% url 'show_station' elem.return_station_id_id %}"> {{ elem.return_station_id_id}}</a></td>
+                  <td><a href="{% url 'show_station' elem.return_station_id_id %}"> {{ elem.return_station_name}}</a></td>
                   <td>{{ elem.covered_distance}} </td>
               <td>{{ elem.duration}} </td>
 
@@ -208,6 +208,7 @@
 </div>
 
 <h4>footer</h4>
+ </div>
  </div>
 </body>
 

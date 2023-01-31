@@ -654,15 +654,13 @@ def search_route_result(request, searched):
 
     searched_routes = Route.objects.filter(Q(route_id__contains=searched) |
                                            Q(departure_station_name__contains=searched) |
-                                           Q(return_station_name__contains=searched) |
-                                           Q(departure_station_id__contains=searched) |
-                                           Q(return_station_id__contains=searched))
+                                           Q(return_station_name__contains=searched)
+                                           )
 
     pagination_route = Paginator(Route.objects.filter(Q(route_id__contains=searched) |
                                                       Q(departure_station_name__contains=searched) |
-                                                      Q(return_station_name__contains=searched) |
-                                                      Q(departure_station_id__contains=searched) |
-                                                      Q(return_station_id__contains=searched)), 50)
+                                                      Q(return_station_name__contains=searched)
+                                                      ), 50)
     page_route = request.GET.get('page')
     routes_on_page = pagination_route.get_page(page_route)
 

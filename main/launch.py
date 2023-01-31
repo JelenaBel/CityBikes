@@ -185,6 +185,11 @@ class Launch:
                         data[6] = data[6].replace(',', '.')
                     route.covered_distance = float(data[6].strip())
                     route.duration = int(data[7].strip())
+                    route.covered_distance_km = route.covered_distance / 1000
+                    route.covered_distance_km = f"{route.covered_distance_km:.3f}"
+                    route.duration_min = route.duration / 60
+                    route.duration_min = f"{route.duration_min:.2f}"
+
                     route.save()
 
             except:
