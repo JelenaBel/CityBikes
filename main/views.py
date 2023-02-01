@@ -361,92 +361,95 @@ def routes_filter(request, dep_id, ret_id, dep, ret, distance, duration, start, 
     dur = duration
     start=start
     end=end
+    if departure_station_id in '-1' and return_station_id in '-1' and dep_st in '-1' and ret_st in '-1' and dist in '-1' and dur in '-1' and start in '-1' and end in '-1':
+         return redirect ('routes')
 
-    ask_string = "SELECT route_id FROM main_route WHERE "
-    pieces={}
-    variables = ()
-    if departure_station_id not in '-1':
-        piece = 'departure_station_id_id == %s'
-        pieces['departure_station_id']= piece
-        variables = variables+(departure_station_id,)
+    else:
+        ask_string = "SELECT route_id FROM main_route WHERE "
+        pieces={}
+        variables = ()
+        if departure_station_id not in '-1':
+            piece = 'departure_station_id_id == %s'
+            pieces['departure_station_id']= piece
+            variables = variables+(departure_station_id,)
 
-    if return_station_id not in '-1':
-        piece = 'return_station_id_id == %s'
-        pieces['return_station_id'] = piece
+        if return_station_id not in '-1':
+            piece = 'return_station_id_id == %s'
+            pieces['return_station_id'] = piece
 
-        variables = variables+(return_station_id,)
-    if dep_st not in '-1':
-        dep_st=dep_st+'%'
-        piece = 'departure_station_name LIKE %s '
-        pieces['departure_station_name'] = piece
-        variables = variables + (dep_st,)
-    if ret_st not in '-1':
-        ret_st = ret_st + '%'
-        piece = 'return_station_name LIKE %s'
-        pieces['return_station_name'] = piece
-        variables = variables + (ret_st,)
-    if dist not in '-1':
-        if '>' not in dist:
-            boundaries = dist.split('-')
+            variables = variables+(return_station_id,)
+        if dep_st not in '-1':
+            dep_st=dep_st+'%'
+            piece = 'departure_station_name LIKE %s '
+            pieces['departure_station_name'] = piece
+            variables = variables + (dep_st,)
+        if ret_st not in '-1':
+            ret_st = ret_st + '%'
+            piece = 'return_station_name LIKE %s'
+            pieces['return_station_name'] = piece
+            variables = variables + (ret_st,)
+        if dist not in '-1':
+            if '>' not in dist:
+                boundaries = dist.split('-')
 
-            piece = '(covered_distance_km >= %s AND covered_distance_km <= %s)'
-            pieces['distance'] = piece
-            variables = variables + (float(boundaries[0]), float(boundaries[1]),)
-        elif '>'  in dist:
-            piece = 'covered_distance_km >= %s'
-            pieces['distance'] = piece
-            print(float(dist[1:len(dist)]))
-            variables = variables + (float(dist[1:len(dist)]),)
-    if dur not in '-1':
-        if '>' not in dur:
-            boundaries1 = dur.split('-')
-            piece = '(duration_min >= %s AND duration_min <= %s)'
-            pieces['duration'] = piece
-            variables = variables + (float(boundaries1[0]), float(boundaries1[1]),)
-        elif '>' in dur:
-            piece = 'duration_min >= %s'
-            pieces['duration'] = piece
-            variables = variables + (float(dur[1:len(dur)]),)
-    if start not in '-1' and end not in '-1':
-        piece = '(departure_time >= %s AND departure_time <= %s)'
-        variables = variables + (start, end, )
-        pieces['departure_time'] = piece
+                piece = '(covered_distance_km >= %s AND covered_distance_km <= %s)'
+                pieces['distance'] = piece
+                variables = variables + (float(boundaries[0]), float(boundaries[1]),)
+            elif '>'  in dist:
+                piece = 'covered_distance_km >= %s'
+                pieces['distance'] = piece
+                print(float(dist[1:len(dist)]))
+                variables = variables + (float(dist[1:len(dist)]),)
+        if dur not in '-1':
+            if '>' not in dur:
+                boundaries1 = dur.split('-')
+                piece = '(duration_min >= %s AND duration_min <= %s)'
+                pieces['duration'] = piece
+                variables = variables + (float(boundaries1[0]), float(boundaries1[1]),)
+            elif '>' in dur:
+                piece = 'duration_min >= %s'
+                pieces['duration'] = piece
+                variables = variables + (float(dur[1:len(dur)]),)
+        if start not in '-1' and end not in '-1':
+            piece = '(departure_time >= %s AND departure_time <= %s)'
+            variables = variables + (start, end, )
+            pieces['departure_time'] = piece
 
-    elif start not in '-1' and end in '-1':
-        piece = 'departure_time >= %s'
-        pieces['departure_time'] = piece
-        variables = variables + (start,)
+        elif start not in '-1' and end in '-1':
+            piece = 'departure_time >= %s'
+            pieces['departure_time'] = piece
+            variables = variables + (start,)
 
-    elif end not in '-1' and start in '-1':
-        piece = 'departure_time <= %%s%'
-        pieces['departure_time'] = piece
-        variables = variables + (end,)
+        elif end not in '-1' and start in '-1':
+            piece = 'departure_time <= %%s%'
+            pieces['departure_time'] = piece
+            variables = variables + (end,)
 
-    counter= 0
+        counter = 0
 
-    for key, value in pieces.items():
-        if counter == 0:
-            ask_string = ask_string + value
-            counter = counter+1
-        else:
-            ask_string = ask_string + ' AND ' + value
+        for key, value in pieces.items():
+            if counter == 0:
+                ask_string = ask_string + value
+                counter = counter+1
+            else:
+                ask_string = ask_string + ' AND ' + value
 
-    print(ask_string)
-    print(variables)
-    with connection.cursor() as cursor:
-        cursor.execute(
-            ask_string,
-            variables)
-        rows_filter = cursor.fetchall()
+        print(ask_string)
+        print(variables)
+        with connection.cursor() as cursor:
+            cursor.execute(
+                ask_string,
+                variables)
+            rows_filter = cursor.fetchall()
 
-    routes = []
-    for el in rows_filter:
-        route = Route.objects.get(route_id=el[0])
-        routes.append(route)
+        routes = []
+        for el in rows_filter:
+            route = Route.objects.get(route_id=el[0])
+            routes.append(route)
 
-    result = len(routes)
+        result = len(routes)
     if request.method == 'POST':
-        form = FiltersForm(request.POST)
+
         form = FiltersForm(request.POST)
 
         departure_station_id = -1
@@ -592,7 +595,6 @@ def routes_sorted(request, column, order):
         pagination = Paginator(Route.objects.order_by(column), 50)
         page = request.GET.get('page')
         route_on_page = pagination.get_page(page)
-
 
     return render(request, 'routes.html', {'form':form, 'route_on_page': route_on_page})
 
