@@ -180,28 +180,7 @@ input.form-control{
 
 	  </ul>
 	</div></th>
-                <th scope="col"><div class="dropdown">
-	  <button class="btn btn-light dropdown-toggle"  style= "font-size: 10px; margin: 0; font-weight: bold" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-		Name swd
-	  </button>
-	  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
 
-		<li><a class="dropdown-item" href="{% url 'stations_sorted' 'name_swd' 'asc' %}">Ascending</a></li>
-          <li><a class="dropdown-item" href="{% url 'stations_sorted' 'name_swd' 'desc' %}">Descending</a></li>
-
-	  </ul>
-	</div></th>
-                <th scope="col"><div class="dropdown">
-	  <button class="btn btn-light dropdown-toggle"  style= "font-size: 10px; margin: 0; font-weight: bold" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-		Name eng
-	  </button>
-	  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-
-		<li><a class="dropdown-item" href="{% url 'stations_sorted' 'name_eng' 'asc' %}">Ascending</a></li>
-          <li><a class="dropdown-item" href="{% url 'stations_sorted' 'name_eng' 'desc' %}">Descending</a></li>
-
-	  </ul>
-	</div></th>
               <th scope="col"><div class="dropdown">
 	  <button class="btn btn-light dropdown-toggle"  style= "font-size: 10px; margin: 0; font-weight: bold" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
 		Osoite
@@ -213,17 +192,7 @@ input.form-control{
 
 	  </ul>
 	</div></th>
-              <th scope="col"><div class="dropdown">
-	  <button class="btn btn-light dropdown-toggle"  style= "font-size: 10px; margin: 0; font-weight: bold" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-		Adress
-	  </button>
-	  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
 
-		<li><a class="dropdown-item" href="{% url 'stations_sorted' 'address_swd' 'asc' %}">A-Z</a></li>
-          <li><a class="dropdown-item" href="{% url 'stations_sorted' 'address_swd' 'desc' %}">Z-A</a></li>
-
-	  </ul>
-	</div></th>
                  <th scope="col"><div class="dropdown">
 	  <button class="btn btn-light dropdown-toggle"  style= "font-size: 10px; margin: 0; font-weight: bold" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
 		City
@@ -235,18 +204,7 @@ input.form-control{
 
 	  </ul>
 	</div></th>
-                 <th scope="col"><div class="dropdown">
-	  <button class="btn btn-light dropdown-toggle"  style= "font-size: 10px; margin: 0; font-weight: bold" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-		Stad
-	  </button>
-	  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
 
-		<li><a class="dropdown-item" href="{% url 'stations_sorted' 'city_swd' 'asc' %}">A..Z</a></li>
-          <li><a class="dropdown-item" href="{% url 'stations_sorted' 'city_swd' 'desc' %}">Z..A</a></li>
-
-	  </ul>
-	</div>
-          </th>
                  <th scope="col"><div class="dropdown">
 	  <button class="btn btn-light dropdown-toggle"  style= "font-size: 10px; margin: 0; font-weight: bold" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
 		Operator
@@ -271,6 +229,8 @@ input.form-control{
 	</div></th>
                  <th scope="col">X</th>
                  <th scope="col">Y</th>
+                 <th scope="col">Update</th>
+                 <th scope="col">Delete</th>
             </tr>
           </thead>
           <tbody>
@@ -280,20 +240,17 @@ input.form-control{
 
               <td class="col1"><a href="{% url 'show_station' el.station_id %}"> {{ el.station_id }}</a></td>
               <td class="col2"><a href="{% url 'show_station' el.station_id %}"> {{ el.name_fin }}</a></td>
-              <td><a href="{% url 'show_station' el.station_id %}"> {{ el.name_swd}}</a></td>
-                  <td><a href="{% url 'show_station' el.station_id %}"> {{ el.name_eng}}</a></td>
+
               <td>{{ el.address_fin}}</td>
-              <td>{{ el.address_swd}}</td>
+
                   <td>{{ el.city_fin}}</td>
-              <td>{{ el.city_swd}}</td>
+
               <td>{{ el.operator }}</td>
               <td>{{ el.capacity}}</td>
               <td>{{ el.coord_x}}</td>
               <td>{{ el.coord_y}}</td>
-              {% if status == 'admin' %}
                <td> <a  href="{% url 'update_station' el.station_id %}"> <button  type="button" class="btn btn-sm btn-outline-dark"><i class="bi bi-pen"></i></button></a></td>
                   <td> <a  href="{% url 'delete_station' el.station_id %}"><button  type="button" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button></a></td>
-               {% endif %}
 
                               </tr>
           {% endfor %}

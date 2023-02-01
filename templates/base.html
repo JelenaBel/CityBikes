@@ -102,9 +102,9 @@
 
   </head>
 
-<nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
-     <a class="navbar-brand" href="{% url 'index' %}">
-        {% load static %} <img src="{% static "bicycle-bike-logo-vector-22962595.jpg" %}" alt="home" height="90px" />
+<nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0" style= 'justify-content: space-between'>
+     <a class="navbar-brand" href="{% url 'index' %}" style= 'justify-content: space-between; margin-left: 20px'>
+        {% load static %} <img src='{% static "bicycle-bike-logo-vector-22962595.jpg" %}' alt="home" height="90px" />
     </a>
       <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="{% url 'index' %}">CityBikes</a>
 
@@ -118,25 +118,38 @@
           <a class="nav-link"  style = 'color: white; '  href="{% url 'routes' %}">Routes</a>
         </li>
       </ul>
+      {% if status == 'admin' %}
     <ul class="navbar-nav px-3">
         <li class="nav-item text-nowrap">
-          <a class="nav-link"  style = 'color: white; '  href="{% url 'add_station' %}">Add Station</a>
+          <a class="nav-link"  style = 'color: white; '  href="{% url 'add_station' %}">Add station</a>
         </li>
       </ul>
-     <ul class="navbar-nav px-3">
-        <li class="nav-item text-nowrap">
-          <a class="nav-link"  style = 'color: white; '  href="#">Add Route</a>
-        </li>
-      </ul>
-                <ul class="navbar-nav px-3">
 
-          <li class="nav-item text-nowrap" >
-          <a class="nav-link" style = 'color: white' href="#">Sign out</a>
+
+       <ul class="navbar-nav px-3">
+        <li class="nav-item text-nowrap">
+          <a class="nav-link"  style = 'color: white; '  href="{% url 'add_route' %}">Add Route</a>
         </li>
       </ul>
-    <div class="d-inline-block" style=" justify-content: flex-end">
+
+      <ul class="navbar-nav px-3">
+        <li class="nav-item text-nowrap">
+          <a class="nav-link"  style = 'color: white; '  href="{% url 'change_status' 'user' %}">User Mode</a>
+        </li>
+      </ul>
+
+      {% else %}
+      <ul class="navbar-nav px-3">
+        <li class="nav-item text-nowrap">
+          <a class="nav-link"  style = 'color: white; '  href="{% url 'change_status' 'admin' %}">Admin mode</a>
+        </li>
+      </ul>
+
+
+      {% endif %}
+    <div class="d-inline-block" style=" justify-content: flex-end; margin-right: 20px">
         <div class="search-form">
-            <form class="d-flex" role="search" method = POST action = '{% url 'search_station' %}'>
+            <form class="d-flex" role="search" method = POST action = "{% url 'search_station' %}">
     {% csrf_token %}
   <input class="form-control me-2" type="search" placeholder="Search station" aria-label="Search" name ='searched'>
   <button class="btn btn-outline-secondary" type="submit">Search</button>

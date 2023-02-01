@@ -1,8 +1,6 @@
-from django.test import SimpleTestCase, TestCase
-from django.urls import reverse, resolve
+from django.test import TestCase
 from main.forms import StationForm, FiltersForm
 import datetime
-from django.utils import timezone
 
 
 class TestForms(TestCase):
@@ -10,7 +8,7 @@ class TestForms(TestCase):
         form = StationForm(data={
             'f_id': 11,
             'station_id': 10567488,
-            "name_fin" : 'TEST',
+            "name_fin": 'TEST',
             "name_swd": 'TEST',
             "name_eng": 'TEST',
             "address_fin": 'TEST',
@@ -19,8 +17,8 @@ class TestForms(TestCase):
             "city_swd": 'TEST',
             "operator": 'TEST',
             "capacity": 123,
-            "coord_x":'435834543',
-            "coord_y":'345435435'
+            "coord_x": '435834543',
+            "coord_y": '345435435'
 
 
         })
@@ -89,6 +87,3 @@ class TestForms(TestCase):
         })
 
         self.assertTrue(form.is_valid())
-
-
-

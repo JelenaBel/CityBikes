@@ -144,6 +144,10 @@
                   <td><a href="{% url 'show_station' elem.return_station_id_id %}"> {{ elem.return_station_name}}</a></td>
                   <td>{{ elem.covered_distance}} </td>
               <td>{{ elem.duration}} </td>
+               {% if status == 'admin'%}
+               <td> <a  href="{% url 'update_route' elem.route_id %}"> <button  type="button" class="btn btn-sm btn-outline-dark"><i class="bi bi-pen"></i></button></a></td>
+                  <td> <a  href="{% url 'delete_route' elem.route_id %}"><button  type="button" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button></a></td>
+         {% endif%}
 
 
                               </tr>

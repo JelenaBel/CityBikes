@@ -143,6 +143,10 @@
               <td>{{ el.capacity}}</td>
               <td>{{ el.coord_x}}</td>
               <td>{{ el.coord_y}}</td>
+              {% if status == 'admin' %}
+               <td> <a  href="{% url 'update_station' el.station_id %}"> <button  type="button" class="btn btn-sm btn-outline-dark"><i class="bi bi-pen"></i></button></a></td>
+                  <td> <a  href="{% url 'delete_station' el.station_id %}"><button  type="button" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button></a></td>
+               {% endif %}
 
                               </tr>
           {% endfor %}

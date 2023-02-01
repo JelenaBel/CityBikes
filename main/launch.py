@@ -3,7 +3,6 @@ from django.utils.timezone import utc
 import datetime
 
 
-
 class Launch:
     def __init__(self):
         self.launched = False
@@ -321,7 +320,7 @@ class Launch:
 
     def change_measurements(self):
         routes = Route.objects.all()
-        counter = 849360
+        counter = 0
         for el in routes:
 
             el.covered_distance_km = el.covered_distance/1000

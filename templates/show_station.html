@@ -135,6 +135,10 @@
                                            <li class="mt-2 pr-3 content" style="font-size: 13px" >Capacity: {{station.capacity}}</li>
                                            <li class="mt-2 pr-3 content" style="font-size: 13px"> Coordinates: {{station.coord_x}}, {{station.coord_y}}</li>
                                      </ul>
+                                     {% if mistake  %}
+                                     <h6> {{ mistake }}</h6>
+                                     {% else  %}
+
                                 <h6> Station statistic for 3 months</h6>
                                   <a href = "{% url 'show_station_per_month' station_id=station.station_id month='05' %}">May</a>
                             <a href = "{% url 'show_station_per_month' station_id=station.station_id month='06' %}">June</a>
@@ -169,7 +173,13 @@
 <a href="{% url 'show_station' start_station.station_id %}">{{start_station.name_fin}}, </a>
 
                                             {% endfor %}
+                                           {% endif%}
+
                                 </li>
+                                {% if status == 'admin' %}
+               <a  href="{% url 'update_station' station.station_id %}"> <button  type="button" class="btn btn-sm btn-outline-dark"><i class="bi bi-pen"></i></button></a>
+                  <a  href="{% url 'delete_station' station.station_id %}"><button  type="button" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button></a>
+               {% endif %}
                                      </ul>
 
                                 </div>

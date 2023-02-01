@@ -1,14 +1,15 @@
-import datetime
-
 from django.shortcuts import render, redirect
 from .launch import Launch
-from .models import Station, Route, MistakesRoute
+from .models import Station, Route
 from django.core.paginator import Paginator
-from django.db.models import Q, Avg, Count, Max
+from django.db.models import Q, Avg
 from django.db import connection
-from .forms import StationForm, FiltersForm
+from .forms import StationForm, FiltersForm, UpdateStationForm, RouteForm, UpdateRouteForm
 from django.contrib import messages
+from django.contrib import sessions
+from .useradmin import UserStatus
 import calendar
+import datetime
 
 
 def index(request):
@@ -34,29 +35,30 @@ def index(request):
     station_number = Station.objects.all().count()
     routes_number = Route.objects.all().count()
 
+    session = request.session
+    status = UserStatus(request)
+    user_status = session.get('status')
+
+
     with connection.cursor() as cursor:
         cursor.execute("SELECT MAX(duration_min) FROM main_route")
         rows = cursor.fetchone()
     longest_route_duration = rows[0]
-    print(rows)
 
     with connection.cursor() as cursor:
         cursor.execute("SELECT MAX(covered_distance_km) FROM main_route")
         rows1 = cursor.fetchone()
     longest_route_distance = rows1[0]
-    print(rows1)
 
     with connection.cursor() as cursor:
         cursor.execute("SELECT MIN(duration_min) FROM main_route")
         rows = cursor.fetchone()
     min_route_duration = rows[0]
-    print(rows)
 
     with connection.cursor() as cursor:
         cursor.execute("SELECT MIN(covered_distance_km) FROM main_route")
         rows1 = cursor.fetchone()
     min_route_distance = rows1[0]
-    print(rows1)
 
     with connection.cursor() as cursor:
         cursor.execute('SELECT departure_station_id_id FROM (SELECT departure_station_id_id, '
@@ -64,7 +66,7 @@ def index(request):
                        'GROUP BY departure_station_id_id) '
                        'ORDER BY RETURN_COUNT DESC', )
         rows4 = cursor.fetchall()
-        print (rows4[0][0])
+
         most_popular_station = Station.objects.get(station_id=rows4[0][0])
 
     with connection.cursor() as cursor:
@@ -74,7 +76,7 @@ def index(request):
                        'ORDER BY RETURN_COUNT', )
         rows5 = cursor.fetchall()
         for el in rows5:
-            print(el[0])
+
             if '999' not in el and '997' not in el:
                 stat = el[0]
                 break
@@ -85,6 +87,7 @@ def index(request):
         least_popular_station = Station.objects.get(station_id=el[0])
 
     return render(request, 'index.html', {  # 'error_message': error_message,
+                                          'status': user_status,
                                           'stations': station_number, 'routes_total': routes_number,
                                           'duration_max': longest_route_duration,
                                           'distance_max': longest_route_distance,
@@ -95,16 +98,27 @@ def index(request):
                                           })
 
 
+def change_status(request, stat):
+    session = request.session
+    request.session['status'] = stat
+
+    return redirect('index')
+
+
 def stations(request):
+    session = request.session
+    user_status = request.session['status']
     stations_all = Station.objects.all()
     pagination = Paginator(Station.objects.all(), 50)
     page = request.GET.get('page')
     station_on_page = pagination.get_page(page)
 
-    return render(request, 'stations.html', {'stations': stations_all, 'station_on_page': station_on_page})
+    return render(request, 'stations.html', {'status': user_status, 'stations': stations_all, 'station_on_page': station_on_page})
 
 
 def stations_sorted(request, column, order):
+    session = request.session
+    user_status = request.session['status']
 
     if 'desc' in order:
         col = "-" + column
@@ -117,66 +131,73 @@ def stations_sorted(request, column, order):
         page = request.GET.get('page')
         station_on_page = pagination.get_page(page)
 
-    return render(request, 'stations.html', {'station_on_page': station_on_page})
+    return render(request, 'stations.html', {'status': user_status, 'station_on_page': station_on_page})
 
 
 def show_station(request, station_id):
-    station_id= station_id
+    session = request.session
+    user_status = request.session['status']
+    station_id = station_id
     station = Station.objects.get(station_id=station_id)
     info = {}
-    avg_start = Route.objects.filter(departure_station_id_id=station_id).aggregate(Avg('covered_distance_km'))
-    avg_start = avg_start['covered_distance_km__avg']
-    avg_start = f"{avg_start:.2f}"
-    avg_end = Route.objects.filter(return_station_id_id=station_id).aggregate(Avg('covered_distance_km'))
-    avg_end = avg_end['covered_distance_km__avg']
-    avg_end = f"{avg_end:.2f}"
-    info['average_depart'] = avg_start
-    info['average_ret'] = avg_end
-    trip_from = Route.objects.filter(departure_station_id_id=station_id).count()
-    trip_to = Route.objects.filter(return_station_id_id=station_id).count()
-    info['trip_from'] = trip_from
-    info['trip_to'] = trip_to
+    try:
+        avg_start = Route.objects.filter(departure_station_id_id=station_id).aggregate(Avg('covered_distance_km'))
+        avg_start = avg_start['covered_distance_km__avg']
+        avg_start = f"{avg_start:.2f}"
+        avg_end = Route.objects.filter(return_station_id_id=station_id).aggregate(Avg('covered_distance_km'))
+        avg_end = avg_end['covered_distance_km__avg']
+        avg_end = f"{avg_end:.2f}"
+        info['average_depart'] = avg_start
+        info['average_ret'] = avg_end
+        trip_from = Route.objects.filter(departure_station_id_id=station_id).count()
+        trip_to = Route.objects.filter(return_station_id_id=station_id).count()
+        info['trip_from'] = trip_from
+        info['trip_to'] = trip_to
 
-    with connection.cursor() as cursor:
-        cursor.execute('SELECT return_station_id_id FROM (SELECT return_station_id_id, '
-                       'COUNT(return_station_id_id) AS RETURN_COUNT FROM main_route '
-                       'WHERE departure_station_id_id=%s GROUP BY return_station_id_id) '
-                       'ORDER BY RETURN_COUNT DESC', (station_id, ))
-        rows = cursor.fetchall()
-    from_station = []
-    p = 0
-    for el in rows:
-        if p < 5:
-            station2 = Station.objects.get(pk=el[0])
-            from_station.append(station2)
-            p = p + 1
-        else:
-            break
+        with connection.cursor() as cursor:
+            cursor.execute('SELECT return_station_id_id FROM (SELECT return_station_id_id, '
+                           'COUNT(return_station_id_id) AS RETURN_COUNT FROM main_route '
+                           'WHERE departure_station_id_id=%s GROUP BY return_station_id_id) '
+                           'ORDER BY RETURN_COUNT DESC', (station_id, ))
+            rows = cursor.fetchall()
+        from_station = []
+        p = 0
+        for el in rows:
+            if p < 5:
+                station2 = Station.objects.get(pk=el[0])
+                from_station.append(station2)
+                p = p + 1
+            else:
+                break
 
-    with connection.cursor() as cursor:
-        cursor.execute(
-            'SELECT departure_station_id_id FROM (SELECT departure_station_id_id, '
-            'COUNT(departure_station_id_id) AS DEPART_COUNT FROM main_route '
-            'WHERE return_station_id_id=%s GROUP BY departure_station_id_id) '
-            'ORDER BY DEPART_COUNT DESC',
-            (station_id,))
-        rows = cursor.fetchall()
-    to_station = []
-    n = 0
-    for elem in rows:
-        if n < 5:
-            print(elem)
-            station1 = Station.objects.get(pk=elem[0])
-            to_station.append(station1)
-            n = n + 1
-        else:
-            break
-
-    return render(request, 'show_station.html', {'station': station, 'info': info,  'from_station': from_station,
-                                                 'to_station': to_station})
+        with connection.cursor() as cursor:
+            cursor.execute(
+                'SELECT departure_station_id_id FROM (SELECT departure_station_id_id, '
+                'COUNT(departure_station_id_id) AS DEPART_COUNT FROM main_route '
+                'WHERE return_station_id_id=%s GROUP BY departure_station_id_id) '
+                'ORDER BY DEPART_COUNT DESC',
+                (station_id,))
+            rows = cursor.fetchall()
+        to_station = []
+        n = 0
+        for elem in rows:
+            if n < 5:
+                print(elem)
+                station1 = Station.objects.get(pk=elem[0])
+                to_station.append(station1)
+                n = n + 1
+            else:
+                break
+        return render(request, 'show_station.html', {'status': user_status,'station': station, 'info': info, 'from_station': from_station,
+                                                     'to_station': to_station})
+    except:
+        mistake = 'There are no information about routes at this station'
+        return render(request, 'show_station.html', {'status': user_status, 'station': station, 'mistake': mistake})
 
 
 def show_station_per_month(request, station_id, month):
+    session = request.session
+    user_status = request.session['status']
     year = '2021'
     month_number = int(month)
     month_name = calendar.month_name[month_number]
@@ -270,27 +291,25 @@ def show_station_per_month(request, station_id, month):
     info['trip_from'] = trip_from
     info['trip_to'] = trip_to
 
-    return render(request, 'show_station_per_month.html', {'station': station, 'month': month, 'month_name': month_name,
+    return render(request, 'show_station_per_month.html', {'status': user_status, 'station': station,
+                                                           'month': month, 'month_name': month_name,
                                                            'info': info, 'from_station': from_station,
                                                            'to_station': to_station})
 
 
-
 def routes(request):
-    submitted = False
-    error = ''
-
+    session = request.session
+    user_status = request.session['status']
     if request.method == 'POST':
         form = FiltersForm(request.POST)
-
         departure_station_id = -1
         return_station_id = -1
-        departure_station=-1
-        return_station=-1
-        distance=-1
-        duration=-1
-        start =-1
-        end =-1
+        departure_station = -1
+        return_station = -1
+        distance = -1
+        duration = -1
+        start = -1
+        end = -1
         if request.method == 'POST':
             if 'dep_st_id' in request.POST and form.data['dep_st_id'] not in '':
                 departure_station_id = form.data['dep_st_id']
@@ -312,74 +331,75 @@ def routes(request):
                 duration = form.data['duration']
 
             if 'date_start' in request.POST and form.data['date_start'] not in '':
-                print(form.data['date_start'])
 
                 row = form.data['date_start'].split(' ')
                 data_date = row[0].split('/')
                 data_time = row[1].split(':')
                 if data_date[0][0] == "0":
                     data_date[0] = data_date[0][1]
-                date = datetime.datetime(int(data_date[2].strip()), int(data_date[1].strip()), int(data_date[0].strip()),
+                date = datetime.datetime(int(data_date[2].strip()), int(data_date[1].strip()),
+                                         int(data_date[0].strip()),
                                          int(data_time[0].strip()), int(data_time[1].strip()), 00)
 
                 start = date
-                print('form return start', start)
 
             if 'date_end' in request.POST and form.data['date_end'] not in '':
-                print(form.data['date_end'])
+
                 row_end = form.data['date_end'].split(' ')
                 data_date1 = row_end[0].split('/')
                 data_time1 = row_end[1].split(':')
                 if data_date1[0][0] == "0":
                     data_date1[0] = data_date1[0][1]
-                date = datetime.datetime(int(data_date1[2].strip()), int(data_date[1].strip()), int(data_date1[0].strip()),
+                date = datetime.datetime(int(data_date1[2].strip()), int(data_date1[1].strip()),
+                                         int(data_date1[0].strip()),
                                          int(data_time1[0].strip()), int(data_time1[1].strip()), 00)
                 end = date
                 print('form return end', end)
-
-        print('Hi', departure_station_id, return_station_id, departure_station, return_station, distance, duration, start, end)
 
         return redirect('routes_filter', departure_station_id, return_station_id, departure_station,
                         return_station, distance, duration, start, end)
     else:
         form = FiltersForm
 
-    routes = Route.objects.all()
+    routes_all = Route.objects.all()
     pagination = Paginator(Route.objects.all(), 100)
     page = request.GET.get('page')
     route_on_page = pagination.get_page(page)
 
-    return render(request, 'routes.html',  {'form': form, 'routes': routes, 'route_on_page': route_on_page})
+    return render(request, 'routes.html',  {'status': user_status, 'form': form, 'routes': routes_all, 'route_on_page': route_on_page})
 
 
 def routes_filter(request, dep_id, ret_id, dep, ret, distance, duration, start, end):
+    session = request.session
+    user_status = request.session['status']
     departure_station_id = dep_id
     return_station_id = ret_id
     dep_st = dep
     ret_st = ret
     dist = distance
     dur = duration
-    start=start
-    end=end
-    if departure_station_id in '-1' and return_station_id in '-1' and dep_st in '-1' and ret_st in '-1' and dist in '-1' and dur in '-1' and start in '-1' and end in '-1':
-         return redirect ('routes')
+    start = start
+    end = end
+    if '-1' in departure_station_id and '-1' in return_station_id and dep_st in '-1' and ret_st in '-1' \
+            and dist in '-1' and dur in '-1' and start in '-1' and end in '-1':
+        return redirect('routes')
 
     else:
         ask_string = "SELECT route_id FROM main_route WHERE "
-        pieces={}
+        pieces = {}
         variables = ()
-        if departure_station_id not in '-1':
+        if '-1' not in departure_station_id:
             piece = 'departure_station_id_id == %s'
-            pieces['departure_station_id']= piece
+            pieces['departure_station_id'] = piece
             variables = variables+(departure_station_id,)
 
-        if return_station_id not in '-1':
+        if '-1' not in return_station_id:
             piece = 'return_station_id_id == %s'
             pieces['return_station_id'] = piece
 
             variables = variables+(return_station_id,)
         if dep_st not in '-1':
-            dep_st=dep_st+'%'
+            dep_st = dep_st+'%'
             piece = 'departure_station_name LIKE %s '
             pieces['departure_station_name'] = piece
             variables = variables + (dep_st,)
@@ -395,7 +415,7 @@ def routes_filter(request, dep_id, ret_id, dep, ret, distance, duration, start, 
                 piece = '(covered_distance_km >= %s AND covered_distance_km <= %s)'
                 pieces['distance'] = piece
                 variables = variables + (float(boundaries[0]), float(boundaries[1]),)
-            elif '>'  in dist:
+            elif '>' in dist:
                 piece = 'covered_distance_km >= %s'
                 pieces['distance'] = piece
                 print(float(dist[1:len(dist)]))
@@ -501,17 +521,14 @@ def routes_filter(request, dep_id, ret_id, dep, ret, distance, duration, start, 
                 data_time1 = row_end[1].split(':')
                 if data_date1[0][0] == "0":
                     data_date1[0] = data_date1[0][1]
-                date = datetime.datetime(int(data_date1[2].strip()), int(data_date[1].strip()),
+                date = datetime.datetime(int(data_date1[2].strip()), int(data_date1[1].strip()),
                                          int(data_date1[0].strip()),
                                          int(data_time1[0].strip()), int(data_time1[1].strip()), 00)
                 end = date
                 print('form return end', end)
 
-            print('Hi', departure_station_id, return_station_id, departure_station, return_station, distance, duration,
-              start, end)
-
             return redirect('routes_filter', departure_station_id, return_station_id, departure_station,
-                        return_station, distance, duration, start, end)
+                            return_station, distance, duration, start, end)
 
     else:
         form = FiltersForm
@@ -519,20 +536,22 @@ def routes_filter(request, dep_id, ret_id, dep, ret, distance, duration, start, 
     pagination = Paginator(routes, 50)
     page = request.GET.get('page')
     route_on_page = pagination.get_page(page)
-    return render(request, 'routes.html', {'result': result, 'form': form, 'route_on_page': route_on_page})
+    return render(request, 'routes.html', {'status': user_status,'result': result, 'form': form, 'route_on_page': route_on_page})
 
 
 def routes_sorted(request, column, order):
+    session = request.session
+    user_status = request.session['status']
     if request.method == 'POST':
         form = FiltersForm(request.POST)
         departure_station_id = -1
         return_station_id = -1
-        departure_station=-1
-        return_station=-1
-        distance=-1
-        duration=-1
-        start =-1
-        end =-1
+        departure_station = -1
+        return_station = -1
+        distance = -1
+        duration = -1
+        start = -1
+        end = -1
         if request.method == 'POST':
             if 'dep_st_id' in request.POST and form.data['dep_st_id'] not in '':
                 departure_station_id = form.data['dep_st_id']
@@ -560,7 +579,8 @@ def routes_sorted(request, column, order):
                 data_time = row[1].split(':')
                 if data_date[0][0] == "0":
                     data_date[0] = data_date[0][1]
-                date = datetime.datetime(int(data_date[2].strip()), int(data_date[1].strip()), int(data_date[0].strip()),
+                date = datetime.datetime(int(data_date[2].strip()), int(data_date[1].strip()),
+                                         int(data_date[0].strip()),
                                          int(data_time[0].strip()), int(data_time[1].strip()), 00)
 
                 start = date
@@ -573,12 +593,11 @@ def routes_sorted(request, column, order):
                 data_time1 = row_end[1].split(':')
                 if data_date1[0][0] == "0":
                     data_date1[0] = data_date1[0][1]
-                date = datetime.datetime(int(data_date1[2].strip()), int(data_date[1].strip()), int(data_date1[0].strip()),
+                date = datetime.datetime(int(data_date1[2].strip()), int(data_date1[1].strip()),
+                                         int(data_date1[0].strip()),
                                          int(data_time1[0].strip()), int(data_time1[1].strip()), 00)
                 end = date
                 print('form return end', end)
-
-        print('Hi', departure_station_id, return_station_id, departure_station, return_station, distance, duration, start, end)
 
         return redirect('routes_filter', departure_station_id, return_station_id, departure_station,
                         return_station, distance, duration, start, end)
@@ -596,16 +615,18 @@ def routes_sorted(request, column, order):
         page = request.GET.get('page')
         route_on_page = pagination.get_page(page)
 
-    return render(request, 'routes.html', {'form':form, 'route_on_page': route_on_page})
+    return render(request, 'routes.html', {'status': user_status,'form': form, 'route_on_page': route_on_page})
 
 
 def show_route(request, route_id):
+    session = request.session
+    user_status = request.session['status']
     route_id = int(route_id)
     route = Route.objects.get(pk=route_id)
     dep_station = Station.objects.get(pk=route.departure_station_id_id)
     ret_station = Station.objects.get(pk=route.return_station_id_id)
 
-    return render(request, 'show_route.html', {'route': route, 'dep_station': dep_station, 'ret_station': ret_station})
+    return render(request, 'show_route.html', {'status': user_status,'route': route, 'dep_station': dep_station, 'ret_station': ret_station})
 
 
 def search_station(request):
@@ -622,6 +643,8 @@ def search_station(request):
 
 
 def search_station_result(request, searched):
+    session = request.session
+    user_status = request.session['status']
 
     searched_stations = Station.objects.filter(Q(station_id__contains=searched) | Q(name_fin__contains=searched)
                                                | Q(name_swd__contains=searched) | Q(name_eng__contains=searched))
@@ -635,7 +658,7 @@ def search_station_result(request, searched):
     results_stations = len(searched_stations)
     print(searched, len(searched_stations))
 
-    return render(request, 'search_stations_result.html', {'searched': searched,
+    return render(request, 'search_stations_result.html', {'status': user_status,'searched': searched,
                                                            'searched_stations': searched_stations,
                                                            'stations_on_page': stations_on_page,
                                                            'results_stations': results_stations,
@@ -653,6 +676,8 @@ def search_route(request):
 
 
 def search_route_result(request, searched):
+    session = request.session
+    user_status = request.session['status']
 
     searched_routes = Route.objects.filter(Q(route_id__contains=searched) |
                                            Q(departure_station_name__contains=searched) |
@@ -670,7 +695,7 @@ def search_route_result(request, searched):
 
     print(searched, len(searched_routes))
 
-    return render(request, 'search_route_result.html', {'searched': searched,
+    return render(request, 'search_route_result.html', {'status': user_status,'searched': searched,
                                                         'searched_routes': searched_routes,
                                                         'routes_on_page': routes_on_page,
                                                         'results_routes': results_routes
@@ -678,8 +703,8 @@ def search_route_result(request, searched):
 
 
 def add_station(request):
-    submitted = False
-    error = ''
+    session = request.session
+    user_status = request.session['status']
 
     if request.method == 'POST':
         form = StationForm(request.POST)
@@ -693,20 +718,213 @@ def add_station(request):
         form = StationForm
         context = {
 
-            'form': form
+            'form': form,
+            'status': user_status
         }
 
         return render(request, 'add_station.html', context)
+
+
+def update_station(request, station_id):
+    session = request.session
+    user_status = request.session['status']
+    station_update = Station.objects.get(pk=station_id)
+    form = UpdateStationForm(request.POST or None, instance=station_update)
+    if form.is_valid():
+        updated_station = form.save(commit=False)
+        updated_station.f_id = station_update.f_id
+        updated_station.station_id = station_update.station_id
+
+        updated_station.save()
+
+        return redirect('admin_stations')
+
+    return render(request, 'update_station.html', {'status': user_status,
+                                                   'station': station_update, 'form': form})
 
 
 def delete_station(request, station_id):
     station = Station.objects.get(station_id=station_id)
     try:
         station.delete()
-        messages.success(request, 'Category ' + station.name_fin + ' was successfully deleted')
+        messages.success(request, 'Station ' + station.name_fin + ' was successfully deleted')
         return redirect('/stations')
 
     except:
         messages.error(request, 'You can not delete Station if any route belong to it. '
                                 'Delete all the routes connected with this station first')
         return redirect('/stations')
+
+
+def admin_stations(request):
+
+    stations_all = Station.objects.all()
+    pagination = Paginator(Station.objects.all(), 50)
+    page = request.GET.get('page')
+    station_on_page = pagination.get_page(page)
+
+    return render(request, 'admin_stations.html', {'stations': stations_all, 'station_on_page': station_on_page})
+
+
+def routes_admin(request):
+    routes_all = Route.objects.all()
+    pagination = Paginator(Route.objects.all(), 50)
+    page = request.GET.get('page')
+    route_on_page = pagination.get_page(page)
+    form = FiltersForm
+
+    return render(request, 'routes_admin.html', {'routes': routes_all, 'route_on_page': route_on_page, 'form': form})
+
+
+def add_route(request):
+    session = request.session
+    user_status = request.session['status']
+    if request.method == 'POST':
+        form = RouteForm(request.POST)
+
+        if form.is_valid():
+            if len(str(form.data['route_id'])) > 9:
+                route_update = Route()
+                route_update.route_id=form.data['route_id'].strip()
+
+                try:
+                    dep_id = form.data['dep_st_id'].strip()
+                    dep_station = Station.objects.get(pk=dep_id)
+                    route_update.departure_station_id = dep_station
+                except:
+                    messages.success(request, 'Departure station id not found. Please add station first.')
+                    return render(request, 'add_route.html', {'status': user_status,
+                                                              'route': route_update, 'form': form,
+                                                              'message': messages})
+
+
+                try:
+                    ret_id= form.data['ret_st_id'].strip()
+                    ret_station = Station.objects.get(pk=ret_id)
+                    route_update.return_station_id = ret_station
+                except:
+                    messages.success(request, 'Return station id not found. Please add station first.')
+                    return render(request, 'add_route.html', {'status': user_status, 'route': route_update, 'form': form,
+                                                                     'message': messages})
+
+                route_update.departure_station_name = form.data['dep_st_name'].strip()
+
+                route_update.duration = form.data['duration'].strip()
+
+                route_update.covered_distance = form.data['distance'].strip()
+
+                route_update.departure_time = form.data['date_start'].strip()
+                row = form.data['date_start'].split(' ')
+                data_date = row[0].split('/')
+                data_time = row[1].split(':')
+                if data_date[0][0] == "0":
+                    data_date[0] = data_date[0][1]
+                date = datetime.datetime(int(data_date[2].strip()), int(data_date[1].strip()),
+                                         int(data_date[0].strip()),
+                                         int(data_time[0].strip()), int(data_time[1].strip()), 00)
+
+                route_update.departure_time = date
+
+                row_end = form.data['date_end'].strip().split(' ')
+                data_date1 = row_end[0].split('/')
+                data_time1 = row_end[1].split(':')
+                if data_date1[0][0] == "0":
+                    data_date1[0] = data_date1[0][1]
+                date1 = datetime.datetime(int(data_date1[2].strip()), int(data_date1[1].strip()),
+                                         int(data_date1[0].strip()),
+                                         int(data_time1[0].strip()), int(data_time1[1].strip()), 00)
+                route_update.return_time = date1
+
+                route_update.save()
+                messages.success(request, 'Route ' + str(route_update.route_id) + ' was successfully added')
+                return redirect('routes_admin')
+            else:
+                form = RouteForm
+                messages.success(request, 'Route id should be more than 4 000 000')
+
+
+                return render(request, 'add_route.html', {
+
+                    'form': form,
+                    'message': messages,
+                    'status': user_status
+                })
+        else:
+            form = RouteForm
+            messages.success(request, 'Route info is not valid')
+
+            return render(request, 'add_route.html', {
+
+                'form': form,
+                'message': messages,
+                'status': user_status
+            })
+    else:
+        form = RouteForm
+
+        return render(request, 'add_route.html', {
+
+                'form': form,
+
+                'status': user_status
+            })
+
+
+def update_route(request, route_id):
+    session = request.session
+    user_status = request.session['status']
+    route_update = Route.objects.get(pk=route_id)
+    form = UpdateRouteForm()
+
+    if request.method == 'POST':
+        if form.is_valid():
+            if form.data['dep_st_id'] in request.POST:
+                try:
+                    dep_station= Station.object.get(pk=form['dep_st_id'].strip())
+                    route_update.departure_station_id =  dep_station
+                except:
+                    messages.success(request, 'Departure station id not found. Please add station first.')
+                    return render(request, 'update_route.html', {'status': user_status,'route': route_update, 'form': form,
+                                                                 'messages': messages})
+
+            if form.data['ret_st_id'] in request.POST:
+                try:
+                    ret_station = Station.object.get(pk=form['ret_st_id'].strip())
+                    route_update.return_station_id = ret_station
+                except:
+                    messages.success(request, 'Return station id not found. Please add station first.')
+                    return render(request, 'update_route.html', {'status': user_status, 'route': route_update, 'form': form,
+                                                                 'messages': messages})
+
+            if form['dep_st_name'] in request.POST:
+                route_update.departure_station_name = form['dep_st_name'].strip()
+            if form['duration'] in request.POST:
+                route_update.duration = form['duration'].strip()
+            if form['distance'] in request.POST:
+                route_update.covered_distance = form['distance'].strip()
+            if form['date_start'] in request.POST:
+                route_update.departure_time = form['date_start'].strip()
+            if form['date_end'] in request.POST:
+                route_update.return_time = form['date_end']
+
+            route_update.save()
+
+            return redirect('admin_routes')
+
+    return render(request, 'update_route.html', {'status': user_status,'route': route_update, 'form': form})
+
+
+def delete_route(request, route_id):
+    if route_id < 4000000:
+        messages.error(request, 'You can not delete route from main routes (routes id under 4 000 000)')
+        return redirect('/stations')
+    else:
+        route = Route.objects.get(route_id=route_id)
+        try:
+            route.delete()
+            messages.success(request, 'Station ' + route.route_id + ' was successfully deleted')
+            return redirect('/stations')
+
+        except:
+            messages.error(request, 'You can not delete route from main routes (routes id under 4 000 000)')
+            return redirect('/routes_admin')

@@ -169,6 +169,10 @@
 
 
                                 </li>
+                                {% if status == 'admin' %}
+               <a  href="{% url 'update_station' station.station_id %}"> <button  type="button" class="btn btn-sm btn-outline-dark"><i class="bi bi-pen"></i></button></a>
+                  <a  href="{% url 'delete_station' station.station_id %}"><button  type="button" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button></a>
+               {% endif %}
                                      </ul>
 
                                 </div>

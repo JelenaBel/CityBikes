@@ -18,6 +18,14 @@ urlpatterns = [
     path('search_station_result/<searched>', views.search_station_result, name='search_station_result'),
     path('search_route/', views.search_route, name='search_route'),
     path('search_route_result/<searched>', views.search_route_result, name='search_route_result'),
-    path('add_station/', views.add_station, name="add_station")
+    path('add_station/', views.add_station, name="add_station"),
+    path('update_station/<station_id>', views.update_station, name="update_station"),
+    path('delete_station/<station_id>', views.delete_station, name="delete_station"),
+    path('admin_stations/', views.admin_stations, name="admin_stations"),
+    path('routes_admin/', views.routes_admin, name="routes_admin"),
+    path('add_route/', views.add_route, name="add_route"),
+    path('update_route/<route_id>', views.update_route, name="update_route"),
+    path('delete_route/<route_id>', views.delete_route, name="delete_route"),
+    path('change_status/<stat>', views.change_status, name="change_status"),
 
     ]

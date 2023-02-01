@@ -266,7 +266,7 @@ input.form-control{
               <th scope="col">
                   <div class="dropdown">
 	  <button class="btn btn-light dropdown-toggle"  style= "font-size: 11px; font-weight: bold" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-		Route ID
+		ID
 	  </button>
 	  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
 
@@ -277,7 +277,7 @@ input.form-control{
 	</div></th>
               <th scope="col"><div class="dropdown">
 	  <button class="btn btn-light dropdown-toggle"  style= "font-size: 11px; font-weight: bold" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-		Departure time
+		Depart time
 	  </button>
 	  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
 
@@ -343,7 +343,7 @@ input.form-control{
 	</div></th>
                  <th scope="col"><div class="dropdown">
 	  <button class="btn btn-light dropdown-toggle"  style= "font-size: 11px; font-weight: bold" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-		Distance (km)
+		Distance
 	  </button>
 	  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
 
@@ -354,7 +354,7 @@ input.form-control{
 	</div></th>
                  <th scope="col"><div class="dropdown">
 	  <button class="btn btn-light dropdown-toggle"  style= "font-size: 12px; font-weight: bold" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-		Duration (min)
+		Duration
 	  </button>
 	  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
 
@@ -379,8 +379,12 @@ input.form-control{
                   <td><a href="{% url 'show_station' elem.departure_station_id_id %}"> {{ elem.departure_station_name}}</a></td>
                   <td><a href="{% url 'show_station' elem.return_station_id_id %}"> {{ elem.return_station_id_id}}</a></td>
                   <td><a href="{% url 'show_station' elem.return_station_id_id %}"> {{ elem.return_station_name}}</a></td>
-                  <td>{{ elem.covered_distance_km}} </td>
-              <td>{{ elem.duration_min}} </td>
+                  <td>{{ elem.covered_distance_km}} km </td>
+              <td>{{ elem.duration_min}} min</td>
+               {% if status == 'admin'%}
+               <td> <a  href="{% url 'update_route' elem.route_id %}"> <button  type="button" class="btn btn-sm btn-outline-dark"><i class="bi bi-pen"></i></button></a></td>
+                  <td> <a  href="{% url 'delete_route' elem.route_id %}"><button  type="button" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button></a></td>
+         {% endif%}
 
 
                               </tr>

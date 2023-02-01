@@ -78,17 +78,24 @@
         white-space: nowrap;
         -webkit-overflow-scrolling: touch;
       }
-      .nav-link {
+.nav-link {
           color: black;
           font-size: medium;
           font-weight: bold;
 
 
       }
-      .table {
+.table {
           font-size: 12px;
           font-weight: bold;
       }
+.demo {
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    justify-content: center
+
+}
 
     </style>
 
@@ -98,7 +105,7 @@
 
 </head>
 <body>
-<div class = 'container'>
+<div class="container">
 <h1>City Bikes</h1>
 {% if error_message %}
     <p>  {{ error_message }}</p>
