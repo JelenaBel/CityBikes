@@ -108,6 +108,15 @@
           font-size: 11px;
           font-weight: bold;
       }
+td{
+    padding_left:1px;
+    padding-right: 1px;
+}
+th{
+    font-size: 10px;
+    padding_left:1px;
+    padding-right: 1px;
+}
 .page-link{
     color: black;
     align-items: center;
@@ -135,6 +144,16 @@ form{
 input.form-control{
     font-size: 12px;
 }
+.sidebarMenu{
+position:sticky_bottom;
+}
+a {
+    font-size: 11px;
+    color: black;
+    font-weight: bold
+
+}
+
 
     </style>
 
@@ -146,7 +165,7 @@ input.form-control{
   <div class="row">
 
     <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
-      <div class="position-sticky pt-3 sidebar-sticky" >
+      <div class="pt-3" >
           <div class="card">
 	<article class="card-group-item">
         <form action='' method=POST enctype="multipart/form-data" >
@@ -258,7 +277,7 @@ input.form-control{
    {% endif %}
 
 
- <form class="d-flex" style="max-width: 600px" role="search" method = POST action = '{% url 'search_route' %}'>
+ <form class="d-flex" style="max-width: 600px" role="search" method = POST action = "{% url 'search_route' %}">
           {% csrf_token %}
         <input class="form-control me-2" type="search" placeholder="Search route" aria-label="Search" name ='searched'>
         <button class="btn btn-outline-secondary" type="submit">Search</button>
@@ -295,7 +314,7 @@ input.form-control{
 	</div></th>
                 <th scope="col"><div class="dropdown">
 	  <button class="btn btn-light dropdown-toggle"  style= "font-size: 11px; font-weight: bold" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-		Return_time
+		Return time
 	  </button>
 	  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
 

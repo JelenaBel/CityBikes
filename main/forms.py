@@ -1,4 +1,4 @@
-from .models import Station, Route
+from .models import Station
 from django.forms import ModelForm, TextInput
 from django import forms
 
@@ -95,6 +95,7 @@ class StationForm(ModelForm):
             }),
 
         }
+
 
 class UpdateStationForm(ModelForm):
 
@@ -273,31 +274,31 @@ class RouteForm(forms.Form):
 
 class UpdateRouteForm(forms.Form):
 
-        dep_st_id = forms.IntegerField(required=False,)
-        ret_st_id = forms.IntegerField(required=False,)
-        dep_st_name = forms.CharField(required=False,)
+    dep_st_id = forms.IntegerField(required=False,)
+    ret_st_id = forms.IntegerField(required=False,)
+    dep_st_name = forms.CharField(required=False,)
 
-        ret_st_name = forms.CharField(required=False,)
-        distance = forms.IntegerField(required=False,)
+    ret_st_name = forms.CharField(required=False,)
+    distance = forms.IntegerField(required=False,)
 
-        duration = forms.IntegerField(required=False,)
+    duration = forms.IntegerField(required=False,)
 
-        date_start = forms.DateTimeField(
-            required=False,
-            input_formats=['%d/%m/%Y %H:%M'],
-            widget=forms.DateTimeInput(attrs={
-                'onchange': 'form.submit();',
-                'class': 'form-control datetimepicker-input',
-                'data-target': '#datetimepicker1'
-            })
-        )
+    date_start = forms.DateTimeField(
+        required=False,
+        input_formats=['%d/%m/%Y %H:%M'],
+        widget=forms.DateTimeInput(attrs={
+            'onchange': 'form.submit();',
+            'class': 'form-control datetimepicker-input',
+            'data-target': '#datetimepicker1'
+        })
+    )
 
-        date_end = forms.DateTimeField(
-            required=False,
-            input_formats=['%d/%m/%Y %H:%M'],
-            widget=forms.DateTimeInput(attrs={
-                'onchange': 'form.submit();',
-                'class': 'form-control datetimepicker-input',
-                'data-target': '#datetimepicker2'
-            })
-        )
+    date_end = forms.DateTimeField(
+        required=False,
+        input_formats=['%d/%m/%Y %H:%M'],
+        widget=forms.DateTimeInput(attrs={
+            'onchange': 'form.submit();',
+            'class': 'form-control datetimepicker-input',
+            'data-target': '#datetimepicker2'
+        })
+    )

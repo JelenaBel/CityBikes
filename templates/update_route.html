@@ -6,6 +6,25 @@
 
 
 {% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+     <!-- Bootstrap 4 -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+
+    <!-- Font Awesome -->
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
+    <!-- Moment.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.23.0/moment.min.js" integrity="sha256-VBLiveTKyUZMEzJd6z2mhfxIqz3ZATCuVMawPZGzIfA=" crossorigin="anonymous"></script>
+
+    <!-- Tempus Dominus Bootstrap 4 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/css/tempusdominus-bootstrap-4.min.css" integrity="sha256-XPTBwC3SBoWHSmKasAk01c08M6sIA5gF5+sRxqak2Qs=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/js/tempusdominus-bootstrap-4.min.js" integrity="sha256-z0oKYg6xiLq3yJGsp/LsY9XykbweQlHl42jHv2XTBz4=" crossorigin="anonymous"></script>
+
    <style>
 .names{
    font-weight: bold
@@ -13,11 +32,14 @@
 input {
    font-size: 12px;
   }
+a {
+color:black;
+text-decoration: None
+}
   </style>
 <div class="container">
      <div class="container small">
-         <h3>Adding new route</h3>
-         {% if messages %}
+                 {% if messages %}
               {% for message in messages %}
                   <div class="container-sm position: align-items-center">
                   <div class="alert alert-warning alert-dismissible fade show" role="alert">
@@ -28,35 +50,105 @@ input {
 {% endfor %}
 {% endif %}
 
- <div class="container small">
+                        <div class="row g-o align-items-flex-start">
+     <div class="col-md-6">
+ <h3>Update route information</h3>
     <form action='' method=POST enctype="multipart/form-data" >
     {% csrf_token %}
         <br>
         <br>
 
- <div class="form-group col-md-6" style ='font-size: small'>
 
-        <p class ='names'> Route id (should be 10 digits long): {{ route.route_id }}</p>
-        <p class ='names'> Departure station id {{ form.dep_st_id }}</p>
-        <p class ='names'> Return station id {{ form.ret_st_id}}</p>
-        <p class ='names'> Departure station name{{ form.dep_st_name}}</p>
-        <p class ='names'> Return station name {{ form.ret_st_name }}</p>
-        <p class ='names'> Distance (in meters) {{ form.distance }}</p>
-        <p class ='names'> Duration (in seconds) {{ form.duration }}</p>
-        <p class ='names'> Route start date (eng) {{ form.date_start }}</p>
-        <p class ='names'> Route end date (eng){{ date_end }}</p>
+ <table>
+<tr>
+        <td><p class ='names'> Route id (unchangeable):</td>
+        <td> <div class="input-group-text">{{ route.route_id }}</div></p></td></tr>
+        <tr><td><p class ='names'> Departure station id </td>
+        <td><div class="input-group-text">{{ form.dep_st_id }}  </div></p></td></tr>
+        <tr><td><p class ='names'> Return station id </td>
+        <td><div class="input-group-text">{{ form.ret_st_id}}  </div></p></td></tr>
+        <tr><td><p class ='names'> Departure station name</td>
+        <td><div class="input-group-text">{{ form.dep_st_name}}  </div></p></td></tr>
+        <tr><td><p class ='names'> Return station name </td>
+        <td><div class="input-group-text">{{ form.ret_st_name }}  </div></p></td></tr>
+        <tr><td><p class ='names'> Distance (in meters) </td>
+        <td><div class="input-group-text">{{ form.distance }}  </div></p></td></tr>
+        <tr><td><p class ='names'> Duration (in seconds) </td>
+        <td><div class="input-group-text">{{ form.duration }}  </div></p></td></tr>
+        <tr><td><p class ='names'> Route start date (eng) </td>
+        <td><div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+  {{ form.date_start }}
+  <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+  </div>
+  </div></p></td></tr>
+        <tr><td><p class ='names'> Route end date (eng)</td><td><div class="input-group date" id="datetimepicker2" data-target-input="nearest">
+
+                {{ form.date_end }}
+
+  <div class="input-group-append" data-target="#datetimepicker2" data-toggle="datetimepicker">
+    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+  </div>
+             </div></p></td></tr>
+        </table>
 
 <br>
 
    <div class = 'text-center'>
-    <button type="submit" class = 'btn-secondary'>Update route</button>
+    <button type="submit" class = 'btn btn-light'>Update route</button>
         <span>{{ error }}</span>
    </div>
-</div>
+
     </form>
+    </div>
+    <div class="col-md-6">
+                            <div class="p-3 right-side">
+                                <div class="d-flex justify-content-between align-items-flex-start">
+                                <h3> Route id  -  {{route.route_id }}</h3></div>
+                                <hr>
+                                 <div class="d-flex justify-content-between align-items-flex-start">
+                                    <h4>{{route.departure_station_name }} - {{route.return_station_name }}</h3><br>
+
+
+                                </div>
+                            <div class="mt-2 pr-3 content  XR65U" style="font-size: 16px">
+
+                                <a href="{% url 'show_station' route.departure_station_id.station_id %}"><p>{{route.departure_station_id.station_id}}  {{route.departure_station_id.address_fin}}, {{route.departure_station_id.city_fin}} ({{route.departure_station_id.address_swd}} {% if route.departure_station_id.city_swd != ''%} {{route.departure_station_id.city_swd}}
+                                {% endif %})
+                                </p></a>
+                                 <a href="{% url 'show_station' route.return_station_id.station_id %}"><p>{{route.return_station_id.station_id}}  {{route.return_station_id.address_fin}}, {{route.return_station_id.city_fin}} ({{route.return_station_id.address_swd}}, {{route.return_station_id.city_swd}})
+                                </p></a>
+                            </div>
+                                <div class="mt-2 pr-3 content " style="font-size: 13px">
+
+                                 <ul >
+
+                                           <li class="mt-2 pr-3 content" style="font-size: 13px">Route duration: {{route.duration_min}} minutes</li>
+                                           <li class="mt-2 pr-3 content" style="font-size: 13px" >Route distance: {{route.covered_distance_km}} km</li>
+                                            <li class="mt-2 pr-3 content" style="font-size: 13px" >Route departure time: {{route.departure_time}}</li>
+                                           <li class="mt-2 pr-3 content" style="font-size: 13px" > Route return time: {{route.return_time}} </li>
+                                     </ul>
+
 
     </div>
     </div>
 </div>
+</div>
+<script>
+  $(function () {
+    $("#datetimepicker1").datetimepicker({
+      format: 'DD/MM/YYYY HH:mm',
+    });
+  });
+</script>
+
+<script>
+  $(function () {
+    $("#datetimepicker2").datetimepicker({
+      format: 'DD/MM/YYYY HH:mm',
+    });
+  });
+</script>
+
 
 {% endblock%}

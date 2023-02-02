@@ -1,6 +1,7 @@
 from main.models import Route, Station, MistakesRoute, MistakesStation
 from django.utils.timezone import utc
 import datetime
+from django.db.models import Max
 
 
 class Launch:
@@ -32,7 +33,7 @@ class Launch:
                 data = row_data[j].split(',')
 
             elif '"' in row_data[j]:
-                data = []
+
                 all_info = row_data[j]
                 counter = 0
                 re_write = ''
@@ -112,14 +113,19 @@ class Launch:
                     print(i)
         self.row_data_lines_count = self.row_data_lines_count + len(row_data)
 
-        if self.stop_point == 0:
+        if len(Route.objects.all()) == 0 and len(MistakesRoute.objects.all) == 0:
             n = 0
         else:
-            n = self.stop_point+1
+            max_route_id = Route.objects.aggregate(Max('route_id'))
+            max_mistake_route_id = MistakesRoute.objects.aggregate(Max('mistake_route_id'))
+            if max_route_id >= max_mistake_route_id:
+                n = int(max_route_id)
+            else:
+                n = int(max_mistake_route_id)
             already = len(Route.objects.all())
             mistakes = len(MistakesRoute.objects.all)
-            print("checkout_point: mistakes ", mistakes, 'already in base', already, ' lines readed', n-1)
-            print('How many already in the base:', len(already))
+            print("checkout_point: mistakes ", mistakes, 'already in base', already, ' lines read', n-1)
+            print('How many already in the base:', already)
 
         for j in range(n, len(row_data)):
             data = []
@@ -129,7 +135,6 @@ class Launch:
 
             elif '"' in row_data[j]:
 
-                data = []
                 all_info = row_data[j]
                 counter = 0
                 re_write = ''
@@ -180,7 +185,6 @@ class Launch:
                     route.return_station_name = data[5].strip()
 
                     if ',' in data[6]:
-                        print (data[6])
                         data[6] = data[6].replace(',', '.')
                     route.covered_distance = float(data[6].strip())
                     route.duration = int(data[7].strip())
@@ -213,7 +217,7 @@ class Launch:
     def check_launch(self):
         row_data = []
         missed = []
-        count = 0
+
         counter_viallinen = 0
         with open('2021-05.csv', 'r', encoding='utf-8') as route_file1:
             i: int
@@ -240,7 +244,7 @@ class Launch:
                 if i != 0:
                     row_data.append(line)
                 i = i + 1
-        count = 0
+
         print(' Length of the array after reading file: '+str(len(row_data)))
         for j in range(0, len(row_data)):
             data = []
@@ -249,7 +253,7 @@ class Launch:
                 data = row_data[j].split(',')
 
             elif '"' in row_data[j]:
-                data = []
+
                 all_info = row_data[j]
                 counter = 0
                 re_write = ''
@@ -318,25 +322,19 @@ class Launch:
 
         return self.launched
 
-    def change_measurements(self):
-        routes = Route.objects.all()
-        counter = 0
-        for el in routes:
+    # def change_measurements(self):
+    #    routes = Route.objects.all()
+    #    counter = 0
+    #    for el in routes:
 
-            el.covered_distance_km = el.covered_distance/1000
-            el.covered_distance_km = f"{el.covered_distance_km:.3f}"
-            el.duration_min = el.duration/60
-            el.duration_min = f"{el.duration_min:.2f}"
+    #        el.covered_distance_km = el.covered_distance/1000
+    #        el.covered_distance_km = f"{el.covered_distance_km:.3f}"
+    #        el.duration_min = el.duration/60
+    #        el.duration_min = f"{el.duration_min:.2f}"
 
-            el.save()
-            counter = counter+1
+    #        el.save()
+    #        counter = counter+1
 
-            if counter % 1000 == 0:
-                print(counter)
-        return print('Changes made')
-
-
-
-
-
-
+    #        if counter % 1000 == 0:
+    #            print(counter)
+    #    return print('Changes made')

@@ -34,7 +34,7 @@ input {
   </style>
 <div class="container">
      <div class="container small">
-         <h3>Adding new route</h3>
+
          {% if messages %}
               {% for message in messages %}
                   <div class="container-sm position: align-items-center">
@@ -47,45 +47,50 @@ input {
 {% endif %}
 
  <div class="container">
+ <h3>Adding new route</h3>
     <form action='' method=POST enctype="multipart/form-data">
     {% csrf_token %}
         <br>
         <br>
 
  <div class="form-group col-md-6" style ='font-size: small'>
-
-
-        <p class ='names'> Route id (should be 10 digits long): </p>{{ form.route_id }}
-        <p class ='names'> Departure station id</p> {{ form.dep_st_id }}
-        <p class ='names'> Return station id</p> {{ form.ret_st_id}}
-        <p class ='names'> Departure station name</p> {{ form.dep_st_name}}
-        <p class ='names'> Return station name</p> {{ form.ret_st_name }}
-        <p class ='names'> Distance (in meters)</p> {{ form.distance }}
-        <p class ='names'> Duration (in seconds)</p> {{ form.duration }}
-        <p class ='names'> Route start date (eng)</p>
-        <br>
-        <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+<table>
+<tr>
+        <td><p class ='names'> Route id (8 digits long):</td>
+        <td> <div class="input-group-text">{{ form.route_id }}</div></p></td></tr>
+        <tr><td><p class ='names'> Departure station id </td>
+        <td><div class="input-group-text">{{ form.dep_st_id }}  </div></p></td></tr>
+        <tr><td><p class ='names'> Return station id </td>
+        <td><div class="input-group-text">{{ form.ret_st_id}}  </div></p></td></tr>
+        <tr><td><p class ='names'> Departure station name</td>
+        <td><div class="input-group-text">{{ form.dep_st_name}}  </div></p></td></tr>
+        <tr><td><p class ='names'> Return station name </td>
+        <td><div class="input-group-text">{{ form.ret_st_name }}  </div></p></td></tr>
+        <tr><td><p class ='names'> Distance (in meters) </td>
+        <td><div class="input-group-text">{{ form.distance }}  </div></p></td></tr>
+        <tr><td><p class ='names'> Duration (in seconds) </td>
+        <td><div class="input-group-text">{{ form.duration }}  </div></p></td></tr>
+        <tr><td><p class ='names'> Route start date (eng) </td>
+        <td><div class="input-group date" id="datetimepicker1" data-target-input="nearest">
   {{ form.date_start }}
   <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
     <div class="input-group-text"><i class="fa fa-calendar"></i></div>
   </div>
-  </div>
-  <br>
-
-        <p class ='names'> Route end date (eng)</p>
-
- <div class="input-group date" id="datetimepicker2" data-target-input="nearest">
+  </div></p></td></tr>
+        <tr><td><p class ='names'> Route end date (eng)</td><td><div class="input-group date" id="datetimepicker2" data-target-input="nearest">
 
                 {{ form.date_end }}
 
   <div class="input-group-append" data-target="#datetimepicker2" data-toggle="datetimepicker">
     <div class="input-group-text"><i class="fa fa-calendar"></i></div>
   </div>
-             </div>
-<br>
+             </div></p></td></tr>
+        </table>
+
+
 
    <div class = 'text-center'>
-    <button type="submit" class = 'btn-secondary'>Add route</button>
+    <button type="submit" class = 'btn btn-light'>Add route</button>
         <span>{{ error }}</span>
    </div>
 </div>

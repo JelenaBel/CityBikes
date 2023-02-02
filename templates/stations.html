@@ -83,7 +83,7 @@
       }
 
 .table {
-    font-size: 11px;
+    font-size: 10px;
 
 }
 
@@ -102,7 +102,7 @@
 
 }
 a {
-    font-size: 12px;
+    font-size: 11px;
     color: black;
     font-weight: bold
 
@@ -134,7 +134,19 @@ form{
 input.form-control{
     font-size: 12px;
 }
-
+.table {
+          font-size: 11px;
+          font-weight: bold;
+      }
+td{
+    padding_left:1px;
+    padding-right: 1px;
+}
+th{
+    font-size: 10px;
+    padding_left:1px;
+    padding-right: 1px;
+}
     </style>
 
 
@@ -143,7 +155,7 @@ input.form-control{
 
 </head>
 <body>
-<div class='container'>
+<div class="container-fluid" style= 'margin:10px'>
 <h4>Stations</h4>
   <form class="d-flex" style="max-width: 600px" role="search" method = POST action = '{% url 'search_station' %}'>
           {% csrf_token %}

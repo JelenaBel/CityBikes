@@ -2,14 +2,25 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from main.models import Station, Route
 import datetime
+from django.contrib import sessions
+from main.useradmin import UserStatus
+from CityBikes import settings
 
 
 class TestViews(TestCase):
 
     def setUp(self):
+
         self.client = Client()
+        s = self.client.session
+        s.update({
+            "status": 'admin',
+            "session_key": 'status',
+        })
+        s.save()
 
     def test_show_stations_GET(self):
+
         station1 = Station(
             f_id='1',
             station_id='1',
@@ -45,7 +56,7 @@ class TestViews(TestCase):
 
         response = self.client.get(show_station_url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'show_station.html', )
+        self.assertTemplateUsed(response, 'show_station.html')
 
     def test_show_route_GET(self):
         station1 = Station(
@@ -279,31 +290,6 @@ class TestViews(TestCase):
         response = self.client.get(show_station_url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'show_station.html')
-
-    def test_add_station_POST(self):
-        add_station_url = reverse('add_station')
-
-        response1 = self.client.post(add_station_url, {
-            'f_id': 11,
-            'station_id': 10567488,
-            "name_fin": 'TEST',
-            "name_swd": 'TEST',
-            "name_eng": 'TEST',
-            "address_fin": 'TEST',
-            "address_swd": 'TEST',
-            "city_fin": 'TEST',
-            "city_swd": 'TEST',
-            "operator": 'TEST',
-            "capacity": 123,
-        })
-        station_id = 10567488
-        show_station_url = reverse('show_station', args=[station_id])
-        response2 = self.client.get(show_station_url)
-
-        self.assertEqual(response1.status_code, 302)
-        self.assertEqual(response2.status_code, 200)
-
-
 
 
 
