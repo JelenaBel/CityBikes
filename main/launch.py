@@ -112,20 +112,20 @@ class Launch:
                 if i % 100000 == 0:
                     print(i)
         self.row_data_lines_count = self.row_data_lines_count + len(row_data)
-
-        if len(Route.objects.all()) == 0 and len(MistakesRoute.objects.all) == 0:
-            n = 0
-        else:
+        try:
+            routes = Route.objects.all()
             max_route_id = Route.objects.aggregate(Max('route_id'))
-            max_mistake_route_id = MistakesRoute.objects.aggregate(Max('mistake_route_id'))
-            if max_route_id >= max_mistake_route_id:
-                n = int(max_route_id)
-            else:
-                n = int(max_mistake_route_id)
-            already = len(Route.objects.all())
-            mistakes = len(MistakesRoute.objects.all)
-            print("checkout_point: mistakes ", mistakes, 'already in base', already, ' lines read', n-1)
-            print('How many already in the base:', already)
+            print("Max route id", max_route_id)
+
+            n = max_route_id['route_id__max']+1
+            already = len(routes)
+
+            print('begins from n', n)
+            print("checkout_point: already in the base ", already,  ' lines read', n-1)
+
+        except:
+            n = 0
+            print('begins from n', n)
 
         for j in range(n, len(row_data)):
             data = []
@@ -161,7 +161,7 @@ class Launch:
                     date_dep = departure_time[0].split('-')
                     year = int(date_dep[0].strip())
                     month = int(date_dep[1].strip())
-                    day = int(date_dep[1].strip())
+                    day = int(date_dep[2].strip())
                     time_dep = departure_time[1].split(':')
                     hour = int(time_dep[0].strip())
                     minute = int(time_dep[1].strip())
@@ -207,7 +207,7 @@ class Launch:
             if j % 1000 == 0:
                 print(j)
         self.stop_point = j
-        print(self.stop_point)
+
 
         return self.routes
 
