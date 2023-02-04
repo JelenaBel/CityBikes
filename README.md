@@ -28,10 +28,14 @@ about trouble or misusage of CityBikes service. ​
 - Additions: Pillow, pip.​
 
 
-#### Prerequisites: 
-To run the project please install:​
+#### Prerequisites: ​
+Python 3.10 ​
+
+To run the project please install:_​_
 Python 3.10 . ​You can find instructions for Python installation here - www.python.org​
+
 Django 4.1.5 ​
+
 This is the recommended way to install Django.​
 Install pip. ​
 The easiest is to use the standalone pip installer. ​
@@ -42,28 +46,25 @@ This tool provides isolated Python environments, which are more practical than i
 
 After you’ve created and activated a virtual environment, enter the command:​
 
-(for Windows) ​
+For Windows:   ...\> py -m pip install Django​
 
-...\> py -m pip install Django​
+For Linux/Mac:   $ python -m pip install Django​
 
-(for Linux/Mac)​
-
-$ python -m pip install Django​
 
 Pillow 9.4.0 ​
 
-(for Windows) ​
+For Windows:    pip install Pillow ​
 
-pip install Pillow ​
-
-(for Linux/Mac)​
+For Linux/Mac: ​
 
 Check  first if pip3 and python3 are correctly installed.​
 
 python3 --version​
 
 pip3 --version​
+
 pip3 install --upgrade pip (if needed)​
+
 pip3 install Pillow​
 
 
@@ -77,17 +78,23 @@ python manage.py makemigrations​
 python manage.py migrate​
 
 Launch class. ​
+
 In order to fill the database with information provided by CityBikes and HLS please 
 open main/views.py and carefully uncomment code from lines 15 until line 31. Leave the comment signs only on the rows with the text explanations. 
+
 Launching will take form 16 to 24 hours. So long time needed to fill in the database wil 3 mln rows of the information. 
 Because of the size of database, file with already created database can not be added to GitHub. 
+
 With your request I can send ready database (size - 400 mb) in zip file. Please contact - elena.belousova@gmail.com
+
 Or see this project published http://rabbid.ddns.net:8000/ with whole database information. ​
 
 After filling up the database please open main/views.py and carefully comment back all lines from line 15 until line 33 (included). ​
 
 To run project on your computer, use terminal in your IDE (VSCode, PyCharm) or any other which supports Python with command:​
+
 python manage.py runserver​
+
 
 #### Tests
 Project now includes 25 tests. 
