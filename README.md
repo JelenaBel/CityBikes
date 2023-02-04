@@ -70,9 +70,14 @@ Or see this project published http://rabbid.ddns.net:8000/ with whole database i
 
 After filling up the database please open main/views.py and carefully comment back all lines from line 15 until line 33 (included). 
 
-To run project on your computer, use terminal with command:
+To run project on your computer, use terminal in your IDE (VSCode, PyCharm) or any other which supports Python with command:
 python manage.py runserver
 
+#### Tests
+Project now includes 25 tests. 
+To run tests in this project, please use terminal in your IDE with command: 
+
+python manage.py test main
 
 #### Project main features:
 
