@@ -71,13 +71,14 @@ pip3 install Pillow​
 ### Guide to run this project:
 
 #### Configuration: ​
-Database. ​
+#### Database. ​
+
 In project is used SQLite database, provided with Django. Additional installation is not needed. 
 Before running the project database tables should be created by running commands:​
 python manage.py makemigrations​
 python manage.py migrate​
 
-Launch class. ​
+#### Launch class. ​
 
 In order to fill the database with information provided by CityBikes and HLS please 
 open main/views.py and carefully uncomment code from lines 15 until line 31. Leave the comment signs only on the rows with the text explanations. 
@@ -91,6 +92,7 @@ Or see this project published http://rabbid.ddns.net:8000/ with whole database i
 
 After filling up the database please open main/views.py and carefully comment back all lines from line 15 until line 33 (included). ​
 
+#### Run ready project
 To run project on your computer, use terminal in your IDE (VSCode, PyCharm) or any other which supports Python with command:​
 
 python manage.py runserver​
