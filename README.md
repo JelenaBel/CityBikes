@@ -9,10 +9,7 @@ Transport’s (HSL) city bicycle stations
 #### Main goals: ​
 
 ```
-To provide customers with highly developed versatile servise to work with the statistic information
-about CityBikes usage in Helsinki and Espoo area. This statistic and analytical information 
- might be used to imporove CityBikes service, to better understand customers needs and habits, 
- as well as get information about trouble or misusing of CityBikes service. ​
+To provide customers with highly developed versatile servise to work with the statistic information about CityBikes usage in Helsinki and Espoo area. This statistic and analytical information might be used to imporove CityBikes service, to better understanding of customers needs and habits,  as well as information about trouble or misusage of CityBikes service. ​
 ​
  
 ```
