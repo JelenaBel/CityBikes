@@ -1,10 +1,8 @@
 ## Project - City Bikes​
 #### Link to the project web-site - http://rabbid.ddns.net:8000/
 
-#### This is the pre-assignment for Solita Dev Academy Finland 2023. Project includes UI and a backend service for displaying data from 
-#### journeys made with city bikes in the Helsinki Capital area.
-The data used in the project is owned by City Bike Finland.  Dataset includes information about Helsinki Region 
-Transport’s (HSL) city bicycle stations
+#### This is the pre-assignment for the Solita Dev Academy Finland 2023. Project includes UI and a backend service for displaying data from journeys made with city bikes in the Helsinki Capital area.
+The data used in the project is owned by City Bike Finland.  Dataset includes information about Helsinki Region Transport’s (HSL) city bicycle stations
 
 #### Main goals: ​
 
