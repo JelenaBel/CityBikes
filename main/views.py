@@ -12,7 +12,7 @@ import datetime
 
 
 def index(request):
-    error_message = 'Success!!!!'
+    #error_message = 'Success!!!!'
     # this is special launch class object which is needed in information from given files is not in database.
     # Notice that process off populating empty database can take long time.
     # if database is already populated with info, please do not uncomment following 7 row under the comment sign,
