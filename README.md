@@ -97,6 +97,10 @@ To run project on your computer, use terminal in your IDE (VSCode, PyCharm) or a
 
 python manage.py runserver​
 
+#### Admin or User Mode
+
+To switch from Admin to User view and back please use button User Mode on top navigation menu. 
+
 
 #### Tests
 Project now includes 25 tests. 
