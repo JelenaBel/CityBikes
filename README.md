@@ -46,26 +46,28 @@ This tool provides isolated Python environments, which are more practical than i
 
 After you’ve created and activated a virtual environment, enter the command:​
 
-For Windows:   ...\> py -m pip install Django​
+For Windows:   
+```...\> py -m pip install Django```​
 
-For Linux/Mac:   $ python -m pip install Django​
+```For Linux/Mac:   $ python -m pip install Django```​
 
 
 Pillow 9.4.0 ​
 
-For Windows:    pip install Pillow ​
+For Windows:    
+```pip install Pillow ```​
 
 For Linux/Mac: ​
 
 Check  first if pip3 and python3 are correctly installed.​
 
-python3 --version​
+```python3 --version```​
 
 pip3 --version​
 
-pip3 install --upgrade pip (if needed)​
+```pip3 install --upgrade pip ```(if needed)​
 
-pip3 install Pillow​
+```pip3 install Pillow```​
 
 
 ### Guide to run this project:
@@ -75,11 +77,12 @@ pip3 install Pillow​
 
 In project is used SQLite database, provided with Django. Additional installation is not needed. 
 Before running the project database tables should be created by running commands:​
-
+```
 python manage.py makemigrations​
-
+```
+```
 python manage.py migrate​
-
+```
 #### Launch class. ​
 
 In order to fill the database with information provided by CityBikes and HLS please 
@@ -96,9 +99,9 @@ After filling up the database please open main/views.py and carefully comment ba
 
 #### Run ready project
 To run project on your computer, use terminal in your IDE (VSCode, PyCharm) or any other which supports Python with command:​
-
+```
 python manage.py runserver​
-
+```
 #### Admin or User Mode
 
 To switch from Admin to User view and back please use button User Mode on top navigation menu. 
@@ -107,9 +110,9 @@ To switch from Admin to User view and back please use button User Mode on top na
 #### Tests
 Project now includes 25 tests. 
 To run tests in this project, please use terminal in your IDE with command: 
-
+```
 python manage.py test main
-
+```
 #### Project main features:
 
 - Responsive design​
