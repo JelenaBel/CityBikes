@@ -31,7 +31,7 @@ about trouble or misusage of CityBikes service. ​
 #### Prerequisites: 
 To run the project please install:​
 Python 3.10 . ​You can find instructions for Python installation here - www.python.org​
-Django 4.1.5​
+Django 4.1.5 ​
 This is the recommended way to install Django.​
 Install pip. ​
 The easiest is to use the standalone pip installer. ​
