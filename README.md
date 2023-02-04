@@ -134,15 +134,3 @@ python manage.py test main
 
 - To keep consistency and fullness of the database information from HSL and CityBikes, admin functionality available only for new stations. In order to test this functionality create new station or new route first. 
 
-#### Guide to run this project:
-- Main page with main statistic   ​
-- Stations list page with search, sorting and pagination​
-- Own station page with address, capacity info and total and monthly statistic of station usage​
-
-- Routes list pages with search, sorting, filtering and pagination​
-- Own route page with map and route information ​
-- Special admin mode for wider functionality - adding, deleting and updating the information about stations and routes ​
-
-- To keep consistency and fullness of the database information from HSL and CityBikes
-
-​
