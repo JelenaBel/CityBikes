@@ -63,7 +63,7 @@ Check  first if pip3 and python3 are correctly installed.​
 
 ```python3 --version```​
 
-pip3 --version​
+```pip3 --version```​
 
 ```pip3 install --upgrade pip ```(if needed)​
 
