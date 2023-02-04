@@ -75,7 +75,9 @@ pip3 install Pillow​
 
 In project is used SQLite database, provided with Django. Additional installation is not needed. 
 Before running the project database tables should be created by running commands:​
+
 python manage.py makemigrations​
+
 python manage.py migrate​
 
 #### Launch class. ​
