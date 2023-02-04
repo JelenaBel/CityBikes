@@ -17,18 +17,19 @@ def index(request):
     # Notice that process off populating empty database can take long time.
     # if database is already populated with info, please do not uncomment following 7 row under the comment sign,
     # so this code do not  interrupt normal functionality of this app
-    launch = Launch()
+    #launch = Launch()
     # if Station.objects.count() < 1:
     #    launch = Launch()
-    launch.launch_stations()
+    #launch.launch_stations()
     # if Route.objects.count() < 1:
-    launch.launch_routes()
-    success = launch.check_launch()
-    if not success:
-        error_message = 'There is no full consistency in information in database'
+    #launch.launch_routes()
+    #success = launch.check_launch()
+    #if not success:
+    #    error_message = 'There is no full consistency in information in database'
 
     # this function converts seconds and meters into min and km, and add info to additional columns to database
     # launch.change_measurements()
+
     # this is the end of part of the code, which is needed for populating empty database
 
     station_number = Station.objects.all().count()

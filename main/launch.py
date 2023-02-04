@@ -206,8 +206,6 @@ class Launch:
 
             if j % 1000 == 0:
                 print(j)
-        self.stop_point = j
-
 
         return self.routes
 
