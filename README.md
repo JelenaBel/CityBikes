@@ -30,27 +30,44 @@ about trouble or misusage of CityBikes service. ​
 
 #### Prerequisites: 
 To run the project please install:​
-Python 3.10 . You can find instructions for Python installation here - www.python.org
+Python 3.10 . ​You can find instructions for Python installation here - www.python.org​
 Django 4.1.5​
 This is the recommended way to install Django.​
-Install pip. The easiest is to use the standalone pip installer. If your distribution already has pip installed, you might need to update it if it’s outdated. If it’s outdated, you’ll know because installation won’t work.
-Take a look at venv. This tool provides isolated Python environments, which are more practical than installing packages systemwide. It also allows installing packages without administrator privileges. The contributing tutorial walks through how to create a virtual environment.
+Install pip. ​
+The easiest is to use the standalone pip installer. ​
+If your distribution already has pip installed, you might need to update it if it’s outdated. ​
+If it’s outdated, you’ll know because installation won’t work.
+Take a look at venv. ​
+This tool provides isolated Python environments, which are more practical than installing packages systemwide. It also allows installing packages without administrator privileges. The contributing tutorial walks through how to create a virtual environment.
 
 After you’ve created and activated a virtual environment, enter the command:​
+
 (for Windows) ​
+
 ...\> py -m pip install Django​
+
 (for Linux/Mac)​
+
 $ python -m pip install Django​
 
 Pillow 9.4.0 ​
+
 (for Windows) ​
+
 pip install Pillow ​
+
 (for Linux/Mac)​
+
 Check  first if pip3 and python3 are correctly installed.​
+
 python3 --version​
+
 pip3 --version​
 pip3 install --upgrade pip (if needed)​
 pip3 install Pillow​
+
+
+### Guide to run this project:
 
 #### Configuration: ​
 Database. ​
