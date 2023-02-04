@@ -49,7 +49,9 @@ After you’ve created and activated a virtual environment, enter the command:�
 For Windows:   
 ```...\> py -m pip install Django```​
 
-```For Linux/Mac:   $ python -m pip install Django```​
+For Linux/Mac:   
+
+```$ python -m pip install Django```​
 
 
 Pillow 9.4.0 ​
@@ -61,13 +63,13 @@ For Linux/Mac: ​
 
 Check  first if pip3 and python3 are correctly installed.​
 
-```python3 --version```​
+```python3 --version​```
 
-```pip3 --version```​
+```pip3 --version​```
 
-```pip3 install --upgrade pip ```(if needed)​
+```pip3 install --upgrade pip​ ```(if needed)
 
-```pip3 install Pillow```​
+```pip3 install Pillow​```
 
 
 ### Guide to run this project:
