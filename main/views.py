@@ -534,7 +534,7 @@ def routes_filter(request, dep_id, ret_id, dep, ret, distance, duration, start, 
     else:
         form = FiltersForm
 
-    pagination = Paginator(routes, 50)
+    pagination = Paginator(routes1, 50)
     page = request.GET.get('page')
     route_on_page = pagination.get_page(page)
     return render(request, 'routes.html', {'status': user_status,
@@ -717,7 +717,7 @@ def add_station(request):
 
             new_station.save()
             messages.success(request, 'Station ' + new_station.name_fin + ' was successfully added')
-            return redirect('stations/')
+            return redirect('/stations')
     else:
         form = StationForm
         context = {
@@ -741,7 +741,7 @@ def update_station(request, station_id):
 
         updated_station.save()
 
-        return redirect('admin_stations')
+        return redirect('/stations')
 
     return render(request, 'update_station.html', {'status': user_status,
                                                    'station': station_update, 'form': form})
@@ -794,11 +794,11 @@ def add_route(request):
                 route_update.departure_station_name = form.data['dep_st_name'].strip()
                 route_update.return_station_name = form.data['ret_st_name'].strip()
 
-                route_update.duration = form.data['duration'].strip()
+                route_update.duration = int(form.data['duration'].strip())
                 route_update.duration_min = route_update.duration/60
                 route_update.duration_min = f"{route_update.duration_min:.2f}"
 
-                route_update.covered_distance = form.data['distance'].strip()
+                route_update.covered_distance = int(form.data['distance'].strip())
                 route_update.covered_distance_km = route_update.covered_distance / 1000
                 route_update.covered_distance_km = f"{route_update.covered_distance_km:.3f}"
 

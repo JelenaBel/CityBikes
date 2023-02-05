@@ -135,10 +135,12 @@
                                             <li class="mt-2 pr-3 content" style="font-size: 13px" >Route departure time: {{route.departure_time}}</li>
                                            <li class="mt-2 pr-3 content" style="font-size: 13px" > Route return time: {{route.return_time}} </li>
                                      </ul>
+                                     <br>
+                                     <br>
 
                                       {% if status == 'admin'%}
-               <a  href="{% url 'update_route' route.route_id %}"> <button  type="button" class="btn btn-sm btn-outline-dark"><i class="bi bi-pen"></i></button></a>
-                  <a  href="{% url 'delete_route' route.route_id %}"><button  type="button" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button></a>
+               <a  href="{% url 'update_route' route.route_id %}"> <button  type="button" class="btn btn-sm btn-outline-dark">Update route<i class="bi bi-pen"></i></button></a>
+                  <a  href="{% url 'delete_route' route.route_id %}"><button  type="button" class="btn btn-sm btn-danger">Delete route<i class="bi bi-trash"></i></button></a>
          {% endif%}
 
 
